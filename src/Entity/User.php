@@ -16,14 +16,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @UniqueEntity(fields={"email"}, message="Il existe déjà un utilisateur avec ce mail")
  * 
  * @ApiResource(
- *     normalizationContext={"group"={"read"}},
- *     denormalizationContext={"groups"={"logup"}},
- *     collectionOperations={
- *         "get"
- *     },
- *     itemOperations={
- *         "get"
- *     }
+ *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
+ *      normalizationContext={"group"={"read"}},
+ *      denormalizationContext={"groups"={"logup"}},
+ *     
  * )
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
