@@ -44,7 +44,14 @@ final class AddS3FileJSController extends AbstractController
             return $s3file;
         } 
 
+        /** @var UploadedFile $file */
 
-        return $this->json(["s3file" => $s3file->getNewName()]);
+        return $this->json([
+            "@context" => "\/api\/contexts\/S3File",
+            "@type" => "S3File",
+            "s3file" => $file->getSize(),
+            "old_name" => "",
+            "new_name" => "",
+        ]);
     }
 }

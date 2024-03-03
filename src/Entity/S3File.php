@@ -75,6 +75,10 @@ class S3File
     /**
      * @var File|null
      * @Assert\NotBlank(allowNull=false)
+     * @Assert\File(
+     *     maxSize = "15M",
+     *     maxSizeMessage = "15M at most => {{ size }}M "
+     * )
      */
     private $file = null;
 
