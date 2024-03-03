@@ -33,6 +33,24 @@ class UserFixtures extends Fixture
         ;
 
         $manager->persist($user);
+
+        $user = new User();
+        $plainpassword = "bbbbbbbb";
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user,
+            $plainpassword
+        );
+        $user->setPassword($hashedPassword);
+        $apiKey = bin2hex(openssl_random_pseudo_bytes(16));
+
+        $user
+            ->setEmail("zhen.yang@hotmail.fr")
+            ->setRoles(["ROLE_USER"])
+            ->setApiKey($apiKey)
+        ;
+
+        $manager->persist($user);
+
         $manager->flush();
     }
 }

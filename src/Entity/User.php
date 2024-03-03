@@ -17,9 +17,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * 
  * @ApiResource(
  *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
- *      normalizationContext={"group"={"read"}},
- *      denormalizationContext={"groups"={"logup"}},
- *     
+ *      
+ *      collectionOperations={
+ *         "get"={
+ *              "normalization_context"={"group"={"read"}}
+ *          }
+ *      },
+ *      itemOperations={
+ *         "get"={
+ *              "normalization_context"={"group"={"read"}}
+ *          }
+ *      }
  * )
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
