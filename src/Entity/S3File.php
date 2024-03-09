@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "post_js" = {
  *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
- *              "path" = "/s3file/js_formdata",
+ *              "path" = "/s3file/file",
  *              "controller" = AddS3FileJSController::class,
  *              "openapi_context"={"summary"="add file with FormDate in js"},
  *              "deserialize"=false,
@@ -31,10 +31,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                         "multipart/form-data"={
  *                             "schema"={
  *                                 "type"="object",
+ *                                 "required" = {"file"},
  *                                 "properties"={
  *                                     "file"={
  *                                         "type"="string",
- *                                         "format"="binary"
+ *                                         "format"="binary",
+ *                                         "required"=true
  *                                     },
  *                                     "bucket"={
  *                                         "type"="string",
@@ -74,7 +76,6 @@ class S3File
 
     /**
      * @var File|null
-     * @Assert\NotBlank(allowNull=false)
      * @Assert\File(
      *     maxSize = "15M",
      *     maxSizeMessage = "15M at most => {{ size }}M "
@@ -90,14 +91,39 @@ class S3File
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Assert\NotBlank(allowNull=false)
      */
-    private $path;
+    private $path = '';
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $newName;
+
+    // --------------------------file info from aws s3-------------------------
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $fullName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $extension;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $size;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $updated;
 
     public function getId(): ?int
     {
@@ -128,12 +154,12 @@ class S3File
         return $this;
     }
 
-    public function getPath(): ?string
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    public function setPath(?string $path): self
+    public function setPath(string $path): self
     {
         $this->path = $path;
 
@@ -148,6 +174,66 @@ class S3File
     public function setNewName(?string $newName): self
     {
         $this->newName = $newName;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    public function setExtension(?string $extension): self
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    public function getSize(): ?int
+    {
+        return $this->size;
+    }
+
+    public function setSize(?int $size): self
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function getFullName(): ?string
+    {
+        return $this->fullName;
+    }
+
+    public function setFullName(?string $fullName): self
+    {
+        $this->fullName = $fullName;
+
+        return $this;
+    }
+
+    public function getUpdated(): ?string
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(?string $updated): self
+    {
+        $this->updated = $updated;
 
         return $this;
     }

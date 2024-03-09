@@ -9,6 +9,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "2.7.*",
+        "aws/aws-sdk-php": "^3.300",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.11",
         "doctrine/doctrine-migrations-bundle": "^3.3",
