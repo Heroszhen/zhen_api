@@ -49,9 +49,9 @@ final class AddS3FileJSController extends AbstractController
         /** @var File $file */
         $s3file
             ->setFile($file)
-            ->setBucket($form->get("bucket"))
-            ->setPath($form->get("path"))
-            ->setNewName($form->get("new_name"))
+            ->setBucket($form->get('bucket'))
+            ->setPath($form->get('path'))
+            ->setNewName($form->get('newName'))
         ;
 
         $errors = $this->validator->validate($s3file);
@@ -63,7 +63,7 @@ final class AddS3FileJSController extends AbstractController
         $oldName = $file->getClientOriginalName();
         $tab = explode('.', $oldName);
         $extension = end($tab);
-        $newName = (null === $form->get("new_name") || '' === $form->get("new_name")) ? $tab[0] : $form->get("new_name");
+        $newName = (null === $form->get('newName') || '' === $form->get('newName')) ? $tab[0] : $form->get('newName');
         $newName = "{$this->utilService->getUniqid()}_{$newName}.{$extension}";
         $fileUrl = $file->getPathName();
         $type = mime_content_type($fileUrl);
@@ -79,8 +79,9 @@ final class AddS3FileJSController extends AbstractController
         }
         $info = array_merge(
             [
-            "@context" => "/api/contexts/S3File",
-            "@type" => "S3File",
+                "@context" => "/api/contexts/S3File",
+                "@type" => "S3File",
+                "@id" => "/api/s3file/file",
             ],
             $info
         );

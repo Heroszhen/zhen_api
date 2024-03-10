@@ -5,7 +5,7 @@ namespace App\Service;
 use Aws\Result;
 use Aws\S3\S3Client;
 use App\Service\UtilService;
-use Aws\Api\DateTimeResult;
+use Aws\S3\Exception\S3Exception;
 
 class S3Service
 {
@@ -24,6 +24,11 @@ class S3Service
         ]);
 
         $this->utilService = $utilService;
+    }
+
+    public function getClient(): S3Client
+    {
+        return $this->s3Client;
     }
 
     /**
@@ -99,7 +104,7 @@ class S3Service
      * 
      * @exemple addOneFile("zhen_test", "movie/aventure/")
      */
-    public function addOneFile(string $bucket, string $path, $fileUrl, ?string $contentType): Result
+    public function addOneFile(string $bucket, string $path, $fileUrl = null, ?string $contentType = null): Result
     {
         $info = [
             'Bucket' => $bucket,
@@ -111,5 +116,28 @@ class S3Service
         }
 
         return $this->s3Client->putObject($info);
+    }
+
+    /**
+     * @exemple
+     * hasElement('zhen', 'abc/')
+     * 
+     * @exemple
+     * hasElement('zhen', 'test/video.mp4')
+     */
+    public function hasElement(string $bucket, string $path): bool
+    {
+        return $this->s3Client->doesObjectExist($bucket, $path);
+    }
+
+    public function hasBucket(string $bucket): bool
+    {
+        try {
+            $this->s3Client->headBucket(['Bucket' => $bucket]);
+
+            return true;
+        } catch(S3Exception $e) {
+            return false;
+        }
     }
 }

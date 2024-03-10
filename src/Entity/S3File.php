@@ -7,18 +7,32 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\API\AddS3FileJSController;
+use App\Controller\API\AddS3FolderController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as AppAssert;
 
 /**
  * @ORM\Entity(repositoryClass=S3FileRepository::class)
  * 
  * @ApiResource(
  *      collectionOperations={
- *         "get"={
- *              "normalization_context"={"group"={"read"}}
+ *         "get"={},
+ *         "post_get_folder"={
+ *              "access_control"="is_granted('ROLE_ADMIN')",
+ *              "method" = "POST",
+ *              "path" = "/s3file/folder",
+ *              "controller" = AddS3FolderController::class,
+ *              "denormalization_context"={"groups"={"input"}}
+ *         },
+ *         "post_add_folder"={
+ *              "access_control"="is_granted('ROLE_ADMIN')",
+ *              "method" = "POST",
+ *              "path" = "/s3file/folder",
+ *              "controller" = AddS3FolderController::class,
+ *              "denormalization_context"={"groups"={"input"}}
  *          },
- *          "post_js" = {
+ *          "post_add_file" = {
  *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
  *              "path" = "/s3file/file",
@@ -61,7 +75,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *         "get"={
  *              "normalization_context"={"group"={"read"}}
- *          }
+ *          },
+ *          "delete"={}
  *      }
  * )
  */
@@ -86,11 +101,14 @@ class S3File
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(allowNull=false)
+     * @AppAssert\CheckS3Bucket
+     * @Groups({"input"})
      */
     private $bucket;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"input"})
      */
     private $path = '';
 
