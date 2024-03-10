@@ -57,6 +57,7 @@ class S3Service
             if (!$this->utilService->strEndsWith($object['Key'], '/')) {
                 $array = explode('.', $object['Key']);
                 $elm['extension'] = end($array);
+                $elm['url'] = $this->getFileUrl($bucket, $object['Key']);
             }
             $elm['updated'] = $object['LastModified']->format('Y-m-d h:i:s');
 
@@ -139,5 +140,29 @@ class S3Service
         } catch(S3Exception $e) {
             return false;
         }
+    }
+
+    public function getFileUrl(string $bucket, string $path): string
+    {
+        $cmd = $this->s3Client->getCommand('GetObject', [
+            'Bucket' => $bucket,
+            'Key' => $path,
+            'ACL' => 'public-read',
+        ]);
+        
+        $request = $this->s3Client->createPresignedRequest($cmd, '+30 minutes');
+        
+        // Get the actual presigned-url
+        $presignedUrl = (string)$request->getUri();
+        
+        return $presignedUrl;
+    }
+
+    public function deleteFile(string $bucket, string $path)
+    {
+        $this->s3Client->deleteObject([
+            'Bucket' => $bucket,
+            'Key' => $path
+        ]);
     }
 }

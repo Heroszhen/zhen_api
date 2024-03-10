@@ -9,6 +9,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\API\AddS3FileJSController;
 use App\Controller\API\AddS3FolderController;
 use App\Controller\API\ListS3FolderController;
+use App\Controller\API\GetS3FileUrlController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as AppAssert;
@@ -20,11 +21,11 @@ use App\Validator as AppAssert;
  *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
  *      collectionOperations={
  *         "get"={},
- *          "post_get_file_url"={
+ *         "post_get_file_url"={
  *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
  *              "path" = "/s3file/file_url",
- *              "controller" = ListS3FolderController::class,
+ *              "controller" = GetS3FileUrlController::class,
  *              "denormalization_context"={"groups"={"input"}}
  *         },
  *         "post_list_folder"={
@@ -150,6 +151,11 @@ class S3File
      */
     private $updated;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $url;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -259,6 +265,18 @@ class S3File
     public function setUpdated(?string $updated): self
     {
         $this->updated = $updated;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): self
+    {
+        $this->url = $url;
 
         return $this;
     }
