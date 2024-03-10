@@ -8,6 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\API\AddS3FileJSController;
 use App\Controller\API\AddS3FolderController;
+use App\Controller\API\ListS3FolderController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as AppAssert;
@@ -16,24 +17,30 @@ use App\Validator as AppAssert;
  * @ORM\Entity(repositoryClass=S3FileRepository::class)
  * 
  * @ApiResource(
+ *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
  *      collectionOperations={
  *         "get"={},
- *         "post_get_folder"={
+ *          "post_get_file_url"={
  *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
- *              "path" = "/s3file/folder",
- *              "controller" = AddS3FolderController::class,
+ *              "path" = "/s3file/file_url",
+ *              "controller" = ListS3FolderController::class,
+ *              "denormalization_context"={"groups"={"input"}}
+ *         },
+ *         "post_list_folder"={
+ *              "access_control"="is_granted('ROLE_ADMIN')",
+ *              "method" = "POST",
+ *              "path" = "/s3file/list_folder",
+ *              "controller" = ListS3FolderController::class,
  *              "denormalization_context"={"groups"={"input"}}
  *         },
  *         "post_add_folder"={
- *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
  *              "path" = "/s3file/folder",
  *              "controller" = AddS3FolderController::class,
  *              "denormalization_context"={"groups"={"input"}}
  *          },
  *          "post_add_file" = {
- *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
  *              "path" = "/s3file/file",
  *              "controller" = AddS3FileJSController::class,
