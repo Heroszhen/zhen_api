@@ -10,6 +10,8 @@ use App\Controller\API\AddS3FileJSController;
 use App\Controller\API\AddS3FolderController;
 use App\Controller\API\ListS3FolderController;
 use App\Controller\API\GetS3FileUrlController;
+use App\Controller\API\DeleteS3FileController;
+use App\Controller\API\RenameS3FileController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as AppAssert;
@@ -21,33 +23,62 @@ use App\Validator as AppAssert;
  *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
  *      collectionOperations={
  *         "get"={},
+ *         "post_rename_file"={
+ *              "method" = "POST",
+ *              "path" = "/s3file/rename_file",
+ *              "controller" = RenameS3FileController::class,
+ *              "denormalization_context"={"groups"={"input"}},
+ *              "validation_groups"={"check_path", "check_newname"},
+ *              "openapi_context"={
+ *                   "summary"="rename one file",
+ *              },
+ *         },
+ *         "post_delete_file"={
+ *              "method" = "POST",
+ *              "path" = "/s3file/delete",
+ *              "controller" = DeleteS3FileController::class,
+ *              "denormalization_context"={"groups"={"input"}},
+ *              "validation_groups"={"check_path"},
+ *              "openapi_context"={
+ *                   "summary"="delete one file or one folder",
+ *              },
+ *         },
  *         "post_get_file_url"={
- *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
  *              "path" = "/s3file/file_url",
  *              "controller" = GetS3FileUrlController::class,
- *              "denormalization_context"={"groups"={"input"}}
+ *              "denormalization_context"={"groups"={"input"}},
+ *              "validation_groups"={"check_path"},
+ *              "openapi_context"={
+ *                   "summary"="get presigned url of one file",
+ *              },
  *         },
  *         "post_list_folder"={
  *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
  *              "path" = "/s3file/list_folder",
  *              "controller" = ListS3FolderController::class,
- *              "denormalization_context"={"groups"={"input"}}
+ *              "denormalization_context"={"groups"={"input"}},
+ *              "openapi_context"={
+ *                   "summary"="get elements of one folder",
+ *              },
  *         },
  *         "post_add_folder"={
  *              "method" = "POST",
  *              "path" = "/s3file/folder",
  *              "controller" = AddS3FolderController::class,
- *              "denormalization_context"={"groups"={"input"}}
+ *              "denormalization_context"={"groups"={"input"}},
+ *              "openapi_context"={
+ *                   "summary"="add one folder",
+ *              },
  *          },
  *          "post_add_file" = {
  *              "method" = "POST",
  *              "path" = "/s3file/file",
  *              "controller" = AddS3FileJSController::class,
- *              "openapi_context"={"summary"="add file with FormDate in js"},
  *              "deserialize"=false,
  *              "openapi_context"={
+ *                 "summary"="add file with FormDate in js",
  *                 "requestBody"={
  *                     "content"={
  *                         "multipart/form-data"={
@@ -117,11 +148,13 @@ class S3File
     /**
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"input"})
+     * @Assert\NotBlank(allowNull=false, groups={"check_path"})
      */
     private $path = '';
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank(allowNull=false, groups={"check_newname"})
      */
     private $newName;
 

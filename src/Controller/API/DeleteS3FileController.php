@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class GetS3FileUrlController extends AbstractController
+final class DeleteS3FileController extends AbstractController
 {
     private $validator;
     private $s3Service;
@@ -37,11 +37,10 @@ final class GetS3FileUrlController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/file_url",
+            "@id" => "/api/s3file/delete",
         ];
         
         $content = json_decode($request->getContent(), true);
-        
         $s3file = new S3File();
         $s3file
             ->setBucket($content['bucket'])
@@ -55,11 +54,15 @@ final class GetS3FileUrlController extends AbstractController
         
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if (!$result) {
-            throw new ElementExistingException('The file is not existing');
+            throw new ElementExistingException('This element is not existing');
         }
 
-        $info['url'] =  $this->s3Service->getFileUrl($content['bucket'], $content['path']);
-        
+        if ($this->utilService->strEndsWith($content['path'], '/')) {
+            $this->s3Service->deleteFolder($content['bucket'], $content['path']);
+        } else {
+            $this->s3Service->deleteFile($content['bucket'], $content['path']);
+        }
+    
         return $this->json($info);
     }
 }

@@ -11,8 +11,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Aws\Result;
 
-final class GetS3FileUrlController extends AbstractController
+final class RenameS3FileController extends AbstractController
 {
     private $validator;
     private $s3Service;
@@ -37,29 +38,54 @@ final class GetS3FileUrlController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/file_url",
+            "@id" => "/api/s3file/rename_file",
         ];
         
         $content = json_decode($request->getContent(), true);
-        
         $s3file = new S3File();
         $s3file
             ->setBucket($content['bucket'])
             ->setPath($content['path'])
+            ->setNewName($content['newName'])
         ;
 
-        $errors = $this->validator->validate($s3file, null, ['check_path']);
+        if (
+            $this->utilService->strEndsWith($content['path'], '/') ||
+            $this->utilService->strEndsWith($content['newName'], '/')
+        ) {
+            throw new BadRequestHttpException('This is not a file');
+        }
+
+        if ($content['path'] === $content['newName']) {
+            throw new BadRequestHttpException('Two paths are same');
+        }
+
+        $errors = $this->validator->validate($s3file, null, ['check_path', 'check_newname']);
         if (0 !== $errors->count()) {
             return $s3file;
         } 
         
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if (!$result) {
-            throw new ElementExistingException('The file is not existing');
+            throw new ElementExistingException('This element is not existing');
         }
 
-        $info['url'] =  $this->s3Service->getFileUrl($content['bucket'], $content['path']);
-        
+        $result = $this->s3Service->hasElement($content['bucket'], $content['newName']);
+        if ($result) {
+            throw new ElementExistingException('The new path is existing');
+        }
+
+        /** @var Result $result */
+        $result = $this->s3Service->copyFile($content['bucket'], $content['path'], $content['newName']);
+        if (isset($result->get('CopyObjectResult')['ETag'])) {
+            $this->s3Service->deleteFile($content['bucket'], $content['path']);
+
+            $tab = $this->s3Service->getFileInfo($content['bucket'], $content['newName']);
+            $info = array_merge($info, $tab);
+        } else {
+            throw new BadRequestHttpException('There is an error');
+        }
+    
         return $this->json($info);
     }
 }

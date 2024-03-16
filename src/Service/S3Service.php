@@ -98,6 +98,26 @@ class S3Service
         return end($tab);
     }
 
+    public function getFileInfo(string $bucket, string $path): array
+    {
+        $info = [];
+       
+        $tab = explode('/', $path);
+        array_pop($tab);
+        $folderPath = implode('/', $tab) . '/';
+
+        $tab = $this->listFolder($bucket, $path, true);
+        foreach($tab as $item) {
+            if ($path === $item["fullName"]) {
+                $info = $item;
+                
+                break;
+            }
+        }
+       
+       return $info;
+    }
+
     /**
      * add one file or one folder
      * 
@@ -158,11 +178,37 @@ class S3Service
         return $presignedUrl;
     }
 
-    public function deleteFile(string $bucket, string $path)
+    public function deleteFile(string $bucket, string $path): void
     {
         $this->s3Client->deleteObject([
             'Bucket' => $bucket,
             'Key' => $path
+        ]);
+    }
+
+    public function deleteFolder(string $bucket, string $path): void
+    {
+        $tab = $this->listFolder($bucket, $path);
+        $folders = [];
+        foreach($tab as $item) {
+            if (is_null($item['extension'])) {
+                $folders[] = $item;
+            } else {
+                $this->deleteFile($bucket, $item["fullName"]);
+            }
+        }
+        
+        foreach($folders as $item) {
+            $this->deleteFile($bucket, $item["fullName"]);
+        }
+    }
+
+    public function copyFile(string $bucket, string $oldPath, string $newPath)
+    {
+        return $this->s3Client->copyObject([
+            'Bucket' => $bucket,
+            'Key' => $newPath,
+            'CopySource' => $bucket . '/' . $this->s3Client::encodeKey($oldPath)
         ]);
     }
 }
