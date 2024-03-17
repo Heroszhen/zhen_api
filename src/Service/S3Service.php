@@ -148,6 +148,14 @@ class S3Service
      */
     public function hasElement(string $bucket, string $path): bool
     {
+        if ($this->utilService->strEndsWith($path, '/')) {//folder
+            $result = $this->s3Client->listObjects([
+                'Bucket' => $bucket, 
+                'Prefix' => $path,
+            ]);
+            return is_null($result->get('Contents')) ? false : true;
+        }
+
         return $this->s3Client->doesObjectExist($bucket, $path);
     }
 
@@ -203,12 +211,51 @@ class S3Service
         }
     }
 
-    public function copyFile(string $bucket, string $oldPath, string $newPath)
+    public function copyFile(string $bucket, string $oldPath, string $newPath): Result
     {
         return $this->s3Client->copyObject([
             'Bucket' => $bucket,
             'Key' => $newPath,
             'CopySource' => $bucket . '/' . $this->s3Client::encodeKey($oldPath)
         ]);
+    }
+
+    public function copyFolder(string $bucket, string $oldPath, string $newPath): void
+    {
+        $objects = $this->s3Client->getIterator('ListObjects', [
+            "Bucket" => $bucket,
+            "Prefix" => $oldPath,
+            'Delimiter' => ""
+        ]);
+        
+        $oldPathTab = explode('/', $oldPath);
+        array_pop($oldPathTab);
+        foreach ($objects as $object) {
+            $elmPath = $object['Key'];
+            $isFile = !$this->utilService->strEndsWith($elmPath, '/');
+            $paths = explode('/', $elmPath);
+            if (!$isFile) {
+                array_pop($paths);
+            }
+            //remove old prefix
+            for($i = 0; $i < count($oldPathTab); $i++) {
+                array_shift($paths);
+            }
+            $newElmPath = implode('/', $paths);
+            if (!$isFile) {
+                $newElmPath .= '/';
+            }
+            $newElmPath = $newPath . $newElmPath;
+            if ($isFile) {
+                if ($this->hasElement($bucket, $newElmPath)) {
+                    $paths[count($paths) -1] = $this->utilService->getUniqid() . '_' . $paths[count($paths) -1];
+                    $newElmPath = implode('/', $paths);
+                    $newElmPath = $newPath . $newElmPath;
+                }
+                $this->copyFile($bucket, $elmPath, $newElmPath);
+            } else {
+                $this->addOneFile($bucket, $newElmPath);
+            }
+        }
     }
 }

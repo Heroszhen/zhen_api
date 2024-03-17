@@ -38,7 +38,8 @@ final class RenameS3FolderController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/rename_file",
+            "@id" => "/api/s3file/rename_folder",
+            "hydra:member" => []
         ];
         
         $content = json_decode($request->getContent(), true);
@@ -69,17 +70,10 @@ final class RenameS3FolderController extends AbstractController
         if (!$result) {
             throw new ElementExistingException('This element is not existing');
         }
-
-        // /** @var Result $result */
-        // $result = $this->s3Service->copyFile($content['bucket'], $content['path'], $content['newName']);
-        // if (isset($result->get('CopyObjectResult')['ETag'])) {
-        //     $this->s3Service->deleteFile($content['bucket'], $content['path']);
-
-        //     $tab = $this->s3Service->getFileInfo($content['bucket'], $content['newName']);
-        //     $info = array_merge($info, $tab);
-        // } else {
-        //     throw new BadRequestHttpException('There is an error');
-        // }
+    
+        $this->s3Service->copyFolder($content['bucket'], $content['path'], $content['newName']);
+        $this->s3Service->deleteFolder($content['bucket'], $content['path']);
+        $info['hydra:member'] = $this->s3Service->listFolder($content['bucket'], $content['newName']);
     
         return $this->json($info);
     }
