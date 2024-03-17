@@ -12,6 +12,7 @@ use App\Controller\API\ListS3FolderController;
 use App\Controller\API\GetS3FileUrlController;
 use App\Controller\API\DeleteS3FileController;
 use App\Controller\API\RenameS3FileController;
+use App\Controller\API\RenameS3FolderController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as AppAssert;
@@ -23,6 +24,16 @@ use App\Validator as AppAssert;
  *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
  *      collectionOperations={
  *         "get"={},
+ *         "post_rename_folder"={
+ *              "method" = "POST",
+ *              "path" = "/s3file/rename_folder",
+ *              "controller" = RenameS3FolderController::class,
+ *              "denormalization_context"={"groups"={"input"}},
+ *              "validation_groups"={"check_path", "check_newname"},
+ *              "openapi_context"={
+ *                   "summary"="rename one folder",
+ *              },
+ *         },
  *         "post_rename_file"={
  *              "method" = "POST",
  *              "path" = "/s3file/rename_file",
