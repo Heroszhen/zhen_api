@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\API\PostEmailController;
+use App\Validator as AppAssert;
 
 /**
  * @ORM\Entity(repositoryClass=EmailRepository::class)
@@ -25,6 +26,7 @@ use App\Controller\API\PostEmailController;
  *         }
  *     }
  * )
+ * @AppAssert\CheckEmail
  */
 class Email
 {
