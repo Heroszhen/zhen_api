@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section id="email-template">
+    {{ content|raw }}
+    <br><br>
+    {% include 'email/signature.html.twig' %}
+</section>
+{% endblock %}

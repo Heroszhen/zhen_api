@@ -20,6 +20,9 @@ class UtilService
         return false;
     }
 
+    /**
+     * strContains('abc', 'a')
+     */
     public function strContains(string $haystack, string $needle): bool
     {
         return false === strpos($haystack, $needle) ? false : true;

@@ -39,7 +39,6 @@ final class AddS3FileJSController extends AbstractController
     {
         $form = $request->request;
         $file = $request->files->get('file');
-        //dd($file->getClientOriginalName(), $file->guessExtension()); 
         
         if (null === $file) {
             throw new BadRequestHttpException('"file" is required');

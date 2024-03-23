@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=ConfigRepository::class)
+ * @ORM\Table(name="email_config")
  */
 class Config
 {
@@ -41,6 +42,16 @@ class Config
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $emailType;
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $fromEmail;
+
+    /**
+     * @ORM\Column(type="string", length=30, nullable=true)
+     */
+    private $fromEmailName;
 
     public function getId(): ?int
     {
@@ -103,6 +114,30 @@ class Config
     public function setEmailType(?string $emailType): self
     {
         $this->emailType = $emailType;
+
+        return $this;
+    }
+
+    public function getFromEmail(): ?string
+    {
+        return $this->fromEmail;
+    }
+
+    public function setFromEmail(?string $fromEmail): self
+    {
+        $this->fromEmail = $fromEmail;
+
+        return $this;
+    }
+
+    public function getFromEmailName(): ?string
+    {
+        return $this->fromEmailName;
+    }
+
+    public function setFromEmailName(?string $fromEmailName): self
+    {
+        $this->fromEmailName = $fromEmailName;
 
         return $this;
     }
