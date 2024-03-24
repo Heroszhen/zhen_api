@@ -1,20 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SecurityController!{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<section id="login">
+    <form action="{{ path('app_security_login') }}" method="post">
+        <div class="mb-4 text-center">
+            <div class="h2">Zhen API</div>
+            <div class="h5">Connectez-vous</div>
+        </div>
+        <div class="mb-3">
+            <label for="username">Mail</label>
+            <input class="form-control form-control-sm" type="text" id="username" name="_username" value="{{ last_username }}"/>
+        </div>
+        <div class="mb-3">
+            <label for="password">Mot de passe</label>
+            <input class="form-control form-control-sm" type="password" id="password" name="_password" autocomplete="off"/>
+        </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <input type="hidden" name="go_to" value="{{ path('admin_user_list') }}"/>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'D:/Developpement/projects/symfony/zhen_api/src/Controller/SecurityController.php'|file_link(0) }}">src/Controller/SecurityController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'D:/Developpement/projects/symfony/zhen_api/templates/security/index.html.twig'|file_link(0) }}">templates/security/index.html.twig</a></code></li>
-    </ul>
-</div>
+        {% if error %}
+            <div class="alert alert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+        <div class="d-grid gap-2">
+            <button class="btn btn-primary" type="submit">Connexion</button>
+        </div>
+    </form>
+</section>
 {% endblock %}

@@ -11,10 +11,16 @@
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('css/app') }}
+            {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% if 'admin' in app.request.get('_route') %}
+            {% include 'admin/common/nav.html.twig' %}
+        {% endif %}
+        <main>
+            {% block body %}{% endblock %}
+        <main>
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}

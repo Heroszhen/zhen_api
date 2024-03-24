@@ -1,0 +1,31 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Zhen API</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if 'admin_user' in app.request.get('_route') %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Compte
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item {% if app.request.get('_route') == 'admin_user_list' %}active{% endif %}" href="{{ path('admin_user_list') }}">Les comptes</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if 'admin_email' in app.request.get('_route') %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Mail
+          </a>
+          <ul class="dropdown-menu">
+            {# <li><a class="dropdown-item {% if app.request.get('_route') == 'admin_user_list' %}active{% endif %}" href="{{ path('admin_user_list') }}">Les comptes</a></li> #}
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ path('app_security_logout') }}">Deconnexion</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
