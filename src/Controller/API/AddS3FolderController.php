@@ -36,7 +36,7 @@ final class AddS3FolderController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/folder",
+            "@id" => "/api/s3files/folder",
         ];
         
         $content = json_decode($request->getContent(), true);

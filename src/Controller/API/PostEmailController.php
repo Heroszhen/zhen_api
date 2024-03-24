@@ -49,7 +49,7 @@ final class PostEmailController extends AbstractController
         $this->mailer->sendEmail($email);
 
         return $this->json([
-            "@context" => "/api/contexts/email",
+            "@context" => "/api/contexts/Email",
             "@type" => "Email",
             "@id" => "/api/emails",
         ]);

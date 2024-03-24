@@ -38,7 +38,7 @@ final class RenameS3FileController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/rename_file",
+            "@id" => "/api/s3files/rename_file",
         ];
         
         $content = json_decode($request->getContent(), true);

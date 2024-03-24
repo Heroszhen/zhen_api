@@ -36,7 +36,7 @@ final class ListS3FolderController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/list_folder",
+            "@id" => "/api/s3files/list_folder",
             "hydra:member" => []
         ];
         

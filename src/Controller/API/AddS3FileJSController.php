@@ -80,7 +80,7 @@ final class AddS3FileJSController extends AbstractController
             [
                 "@context" => "/api/contexts/S3File",
                 "@type" => "S3File",
-                "@id" => "/api/s3file/file",
+                "@id" => "/api/s3files/file",
             ],
             $info
         );

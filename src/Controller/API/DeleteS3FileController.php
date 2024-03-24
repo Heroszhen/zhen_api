@@ -37,7 +37,7 @@ final class DeleteS3FileController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/delete",
+            "@id" => "/api/s3files/delete",
         ];
         
         $content = json_decode($request->getContent(), true);

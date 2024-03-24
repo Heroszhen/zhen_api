@@ -37,7 +37,7 @@ final class GetS3FileUrlController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/file_url",
+            "@id" => "/api/s3files/file_url",
         ];
         
         $content = json_decode($request->getContent(), true);

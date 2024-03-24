@@ -38,7 +38,7 @@ final class RenameS3FolderController extends AbstractController
         $info = [
             "@context" => "/api/contexts/S3File",
             "@type" => "S3File",
-            "@id" => "/api/s3file/rename_folder",
+            "@id" => "/api/s3files/rename_folder",
             "hydra:member" => []
         ];
         
