@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './users.scss';
 import { getToken } from '../utilService';
+import Button from '@mui/material/Button';
 
 export default function () {
     useEffect(() => {
@@ -25,7 +26,7 @@ export default function () {
     return (
         <>
             <section id="users-list">
-
+            <Button variant="contained">Hello world</Button>
             </section>
         </>
     )
