@@ -21,6 +21,7 @@ const Users = () => {
                             <th scope="col">Id</th>
                             <th scope="col">Mail</th>
                             <th scope="col">Roles</th>
+                            <th scope="col">Dates</th>
                             <th scope="col">Actions</th>
                         </tr>
                     </thead>
@@ -39,6 +40,14 @@ const Users = () => {
                                                     )
                                                 })
                                             }
+                                        </td>
+                                        <td>
+                                            <div>
+                                                Créé: {user.created}
+                                            </div>
+                                            <div>
+                                                Modifé: {user.updated}
+                                            </div>
                                         </td>
                                         <td></td>
                                     </tr>
