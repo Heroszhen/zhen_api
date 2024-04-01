@@ -35,7 +35,7 @@ export const asyncUpdateUser = (user, id) => async (dispatch) => {
     .then(json => {
         if (json['violations'] !== undefined) {
             dispatch({ type: ADD_MSG, payload: {type: TYPE_ERROR, messages:json['violations']} });
-        } else {console.log(json)
+        } else {
             dispatch({ type: UPDATE_USER, payload: json });
         } 
     })
