@@ -1,5 +1,5 @@
 import { getToken, getHeaders } from "../../utilService";
-import { ADD_MSG } from "../reducers/errorReducer";
+import { ADD_MSG, TYPE_ERROR } from "../reducers/errorReducer";
 
 export const GET_USERS = "get_users";
 export const GET_USER = "get_user";
@@ -34,7 +34,7 @@ export const asyncUpdateUser = (user, id) => async (dispatch) => {
     .then(response => response.json())
     .then(json => {
         if (json['violations'] !== undefined) {
-            dispatch({ type: ADD_MSG, payload: json['violations'] });
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_ERROR, messages:json['violations']} });
         } else {console.log(json)
             dispatch({ type: UPDATE_USER, payload: json });
         } 
