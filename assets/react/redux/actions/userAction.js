@@ -1,12 +1,16 @@
-import { getToken } from "../../utilService";
+import { getToken, getHeaders } from "../../utilService";
+import { ADD_MSG } from "../reducers/errorReducer";
 
 export const GET_USERS = "get_users";
+export const GET_USER = "get_user";
+export const UPDATE_USER = "update_user";
+const ROUTE_PREFIX = "/api/users";
 
 export const asyncGetUsers = () => {
     return async (dispatch) => {
         const token = (await getToken())['data'];
         return fetch(
-            '/api/users',
+            ROUTE_PREFIX,
             {headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-type': 'application/ld+json'
@@ -18,4 +22,24 @@ export const asyncGetUsers = () => {
         });
         
     }
+}
+
+export const asyncUpdateUser = (user, id) => async (dispatch) => {
+    const headers = await getHeaders('patch');
+    fetch(`${ROUTE_PREFIX}/${id}`, {
+        headers: headers,
+        method: 'PATCH',
+        body: JSON.stringify(user)
+    })
+    .then(response => response.json())
+    .then(json => {
+        if (json['violations'] !== undefined) {
+            dispatch({ type: ADD_MSG, payload: json['violations'] });
+        } else {console.log(json)
+            dispatch({ type: UPDATE_USER, payload: json });
+        } 
+    })
+    .catch(error => {
+        
+    });
 }

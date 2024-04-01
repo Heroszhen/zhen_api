@@ -2,10 +2,12 @@ import { legacy_createStore as createStore, combineReducers,  applyMiddleware } 
 import { thunk } from 'redux-thunk';
 
 import userReducer from './reducers/userReducer';
+import errorReducer from './reducers/errorReducer';
 
 
 const rootReducer = combineReducers({
-    userReducer
+    userReducer,
+    errorReducer
 });
 
 // const store = createStore(
