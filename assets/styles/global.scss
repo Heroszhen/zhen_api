@@ -17,4 +17,11 @@
     width: 100%;
     min-height: 100vh;
     padding-top: 56px;
+
+    .admin-section {
+        padding-top:10px;
+        .admin-section-title {
+           margin-bottom:20px;
+        }
+    }
 }

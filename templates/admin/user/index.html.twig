@@ -2,6 +2,6 @@
 
 {% block body %}
 <section class='admin'>
-    <div {{ react_component('users/users') }}></div>
+    <div {{ react_component('App', {'path': 'users/users'}) }}></div>
 </section>
 {% endblock %}

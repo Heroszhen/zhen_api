@@ -16,17 +16,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @UniqueEntity(fields={"email"}, message="Il existe déjà un utilisateur avec ce mail")
  * 
  * @ApiResource(
- *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
- *      
+ *      attributes={
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "normalization_context"={"groups"={"read"}},
+ *          "denormalization_context"={"groups"={"write"}}
+ *      },
  *      collectionOperations={
- *         "get"={
- *              "normalization_context"={"group"={"read"}}
- *          }
+ *         "get"={}
  *      },
  *      itemOperations={
- *         "get"={
- *              "normalization_context"={"group"={"read"}}
- *          }
+ *         "get"={}
  *      }
  * )
  */
@@ -42,13 +41,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $roles = [];
 
@@ -56,10 +55,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private $password = 'INIT';
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read"})
      */
     private $apiKey;
 
