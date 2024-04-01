@@ -49,7 +49,11 @@ const Users = () => {
                                                 Modifé: {user.updated}
                                             </div>
                                         </td>
-                                        <td></td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary me-1 mb-1">Modifer</button>
+                                            <button type="button" class="btn btn-primary me-1 mb-1">Mot de passe</button>
+                                            <button type="button" class="btn btn-primary me-1 mb-1">Api Key</button>
+                                        </td>
                                     </tr>
                                 )
                             })
