@@ -1,15 +1,21 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './errorMessage.scss';
-import { DELETE_MSG } from '../redux/reducers/errorReducer';
+import { DELETE_MSG, TYPE_ERROR, TYPE_SUCCESS } from '../redux/reducers/errorReducer';
 
 const ErrorMessage = () => {
     const dispatch = useDispatch();
     const errorReducer = useSelector(state => state.errorReducer);
 
+    useEffect(() => {
+        if (errorReducer.message?.type === TYPE_SUCCESS) {
+            alert("ok")
+        }
+    }, [errorReducer]);
+
     return (
         <React.Fragment>
-            {errorReducer.message !== null &&
+            {(errorReducer.message !== null && errorReducer.message.type === TYPE_ERROR) &&
                 <div id="error-message">
                     <section className={errorReducer.message.type}>
                         {

@@ -5,10 +5,10 @@ import { Provider } from 'react-redux';
 import Users from './users/users';
 import ErrorMessage from './errorMessage/errorMessage';
 
-export default function (prop) {
+export default function (props) {
     return (
         <Provider store={store}>
-            {prop.path === 'users/users' && <Users />}
+            {props.path === 'users/users' && <Users />}
             <ErrorMessage />
         </Provider>
     )
