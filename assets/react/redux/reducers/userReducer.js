@@ -1,4 +1,4 @@
-import { GET_USERS, UPDATE_USER } from "../actions/userAction";
+import { GET_USERS, UPDATE_USER, ADD_USER } from "../actions/userAction";
 
 const initialState = {
     users: []
@@ -17,6 +17,12 @@ export default function userReducer(state = initialState, action) {
                     return elm;
                 })
             };
+
+        case ADD_USER:
+            return {
+                ...state,
+                users: [...state.users, action.payload]
+            };  
 
         default:
             return state

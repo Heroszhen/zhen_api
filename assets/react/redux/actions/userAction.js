@@ -3,6 +3,7 @@ import { ADD_MSG, TYPE_ERROR, TYPE_SUCCESS } from "../reducers/errorReducer";
 
 export const GET_USERS = "get_users";
 export const GET_USER = "get_user";
+export const ADD_USER = "add_user";
 export const UPDATE_USER = "update_user";
 const ROUTE_PREFIX = "/api/users";
 
@@ -40,7 +41,23 @@ export const asyncUpdateUser = (user, id) => async (dispatch) => {
             dispatch({ type: UPDATE_USER, payload: json });
         } 
     })
-    .catch(error => {
-        
-    });
+    .catch(error => {});
+}
+
+export const asyncAddUser = (user) => async (dispatch) => {
+    const headers = await getHeaders();
+    fetch(ROUTE_PREFIX, {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify(user)
+    })
+    .then(response => response.json())
+    .then(json => {
+        if (json['violations'] !== undefined) {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_ERROR, messages:json['violations']} });
+        } else {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_SUCCESS, messages:[]} });
+            dispatch({ type: ADD_USER, payload: json });
+        } 
+    })
 }

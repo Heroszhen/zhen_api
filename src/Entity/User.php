@@ -10,6 +10,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Traits\DateTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -61,7 +62,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @var string The hashed password
+     * 
+     * @Assert\NotBlank
      * @ORM\Column(type="string")
+     * @Groups({"write"})
      */
     private $password = 'INIT';
 

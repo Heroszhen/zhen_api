@@ -2,14 +2,19 @@ import React, {useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import './errorMessage.scss';
 import { DELETE_MSG, TYPE_ERROR, TYPE_SUCCESS } from '../redux/reducers/errorReducer';
+import 'react-notifications/lib/notifications.css';
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 const ErrorMessage = () => {
     const dispatch = useDispatch();
     const errorReducer = useSelector(state => state.errorReducer);
+    let msg = "";
 
     useEffect(() => {
         if (errorReducer.message?.type === TYPE_SUCCESS) {
-            alert("ok")
+            msg = '';
+            errorReducer.message.messages.forEach(item => msg += item);
+            NotificationManager.success(msg, 'Enregistré');
         }
     }, [errorReducer]);
 
@@ -35,6 +40,7 @@ const ErrorMessage = () => {
                     </section>
                 </div>
             }
+            <NotificationContainer />
         </React.Fragment>
     )
 }

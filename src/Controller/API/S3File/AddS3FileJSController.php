@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\API;
+namespace App\Controller\API\S3File;
 
 use App\Entity\S3File;
 use App\Service\S3Service;

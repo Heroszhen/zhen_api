@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\API;
+namespace App\Controller\API\Email;
 
 use App\Entity\Email\Email;
 use App\Service\Mailer\SmtpService;
