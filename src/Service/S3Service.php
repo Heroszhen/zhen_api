@@ -58,6 +58,10 @@ class S3Service
                 $array = explode('.', $object['Key']);
                 $elm['extension'] = end($array);
                 $elm['url'] = $this->getFileUrl($bucket, $object['Key']);
+            } else {
+                if ($object['Key'] === $path) {
+                    continue;
+                }
             }
             $elm['updated'] = $object['LastModified']->format('Y-m-d h:i:s');
 
