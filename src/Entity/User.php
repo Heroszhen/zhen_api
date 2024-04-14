@@ -29,7 +29,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      itemOperations={
  *         "get"={},
- *         "patch"={}
+ *         "patch"={},
+ *         "patch_update_password"={
+ *              "method"="PATCH",
+ *              "path"="/users/{id}/password",
+ *              "controller"=App\Controller\API\User\UpdateUserPasswordController::class,
+ *              "denormalization_context"={"groups"={"pwd:input"}},
+ *         }
  *      }
  * )
  */
@@ -51,6 +57,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"read", "write"})
+     * @Assert\NotBlank
      */
     private $email;
 
@@ -65,7 +72,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * 
      * @Assert\NotBlank
      * @ORM\Column(type="string")
-     * @Groups({"write"})
+     * @Groups({"write", "pwd:input"})
      */
     private $password = 'INIT';
 

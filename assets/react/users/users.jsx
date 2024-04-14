@@ -62,10 +62,15 @@ const Users = () => {
     const switchRole = (event) => {}
 
     const submitEditUserForm = (data) => {
-        if (!Array.isArray(data['roles'])) {
-            data['roles'] = [data['roles']];
+        if (modalAction === ACTION_ADD_USER) {
+            if (!Array.isArray(data['roles'])) {
+                data['roles'] = [data['roles']];
+            }
+            dispatch(asyncAddUser(data));
         }
-        dispatch(asyncAddUser(data));
+
+        if (modalAction === ACTION_PASSWORD) {
+        }
     }
 
     return (
@@ -165,6 +170,7 @@ const Users = () => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
+                            <section>
                             {modalAction === ACTION_ADD_USER &&
                                 <form onSubmit={handleSubmit(submitEditUserForm)}>
                                     <div className="mb-3">
@@ -231,6 +237,12 @@ const Users = () => {
                                     </div>
                                 </form>
                             }
+                            </section>
+                            <section>
+                            {modalAction === ACTION_PASSWORD &&
+                                <form onSubmit={handleSubmit(submitEditUserForm)}></form>
+                            }
+                            </section>
                         </div>
                     </div>
                 </div>
