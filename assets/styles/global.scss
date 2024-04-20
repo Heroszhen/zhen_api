@@ -24,6 +24,7 @@
 
     .admin-section {
         padding-top:10px;
+        min-height: calc(100vh - 56px);
         .admin-section-title {
            margin-bottom:20px;
         }

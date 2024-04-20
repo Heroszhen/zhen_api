@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './users.scss';
 import { useSelector, useDispatch } from 'react-redux';
-import { asyncGetUsers, asyncUpdateUser, asyncAddUser, ADD_USER } from '../redux/actions/userAction';
+import { 
+    asyncGetUsers, 
+    asyncUpdateUser, 
+    asyncAddUser, 
+    ADD_USER, 
+    asyncUpdateUserPassword, 
+    asyncDeleteUser,
+    asyncUpdateUserApiKey
+} from '../redux/actions/userAction';
 import { useForm } from "react-hook-form";
 
 const Users = () => {
@@ -14,7 +22,7 @@ const Users = () => {
     const ACTION_EDIT_USER = "edit_user";
     const ACTION_PASSWORD = "edit_password";
     const ACTION_APIKEY = "edit_apikey";
-    const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const { register, handleSubmit, formState: { errors }, reset, getValues } = useForm();
 
     useEffect(() => {
         dispatch(asyncGetUsers());
@@ -50,13 +58,22 @@ const Users = () => {
                 email: null,
                 password: null,
                 roles: ["ROLE_USER"]
-            }))
+            }));
         }
+
+        if (action === ACTION_PASSWORD) {
+            reset(formValues => ({
+                ...formValues,
+                password: null,
+                confirmation: null
+            }));
+        }
+
         setModalAction(action);
         if (openModal === true) {
             btnModalRef.current.click();
         }
-        setElmIndex(index)
+        setElmIndex(index);
     }
 
     const switchRole = (event) => {}
@@ -70,6 +87,7 @@ const Users = () => {
         }
 
         if (modalAction === ACTION_PASSWORD) {
+            dispatch(asyncUpdateUserPassword(userReducer.users[elmIndex].id, {password: data['password']}));
         }
     }
 
@@ -145,8 +163,11 @@ const Users = () => {
                                             </div>
                                         </td>
                                         <td>
-                                            <button type="button" className="btn btn-info me-1 mb-1" onClick={() => switchModal(true, ACTION_PASSWORD, key)}>Mot de passe</button>
-                                            <button type="button" className="btn btn-dark me-1 mb-1">Api Key</button>
+                                            <button type="button" className="btn btn-info me-1 mb-1" onClick={(e) => {e.stopPropagation(); switchModal(true, ACTION_PASSWORD, key)}}>Mot de passe</button>
+
+                                            <button type="button" className="btn btn-dark me-1 mb-1" onClick={()=>dispatch(asyncUpdateUserApiKey(userReducer.users[key].id, {apikey:''}))}>Api Key</button>
+
+                                            <button type="button" className="btn btn-danger me-1 mb-1" onClick={()=>dispatch(asyncDeleteUser(userReducer.users[key].id))}>Supprimer</button>
                                         </td>
                                     </tr>
                                 )
@@ -167,7 +188,7 @@ const Users = () => {
                                 {modalAction === ACTION_PASSWORD && "Modifier le mot de passe"}
                                 {modalAction === ACTION_APIKEY && "Modifier api key"}
                             </h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={()=>setElmIndex(null)}></button>
                         </div>
                         <div className="modal-body">
                             <section>
@@ -240,7 +261,52 @@ const Users = () => {
                             </section>
                             <section>
                             {modalAction === ACTION_PASSWORD &&
-                                <form onSubmit={handleSubmit(submitEditUserForm)}></form>
+                                <form onSubmit={handleSubmit(submitEditUserForm)}>
+                                    <div className="mb-3">
+                                        <label htmlFor="password">Mot de passe *</label>
+                                        <input
+                                            className="form-control"
+                                            type="password" id="password" name="password"
+                                            autoComplete='off'
+                                            {...register("password", { 
+                                                required: { 
+                                                    value: true, 
+                                                    message: 'Le champ est obligatoire'
+                                                },
+                                                minLength: {
+                                                    value: 8,
+                                                    message: "8 caractères au moins"
+                                                }
+                                            })}
+                                        />
+                                        {errors.password && <div className="alert alert-danger mt-1">{errors.password.message}</div>}
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="confirmation">Confirmation *</label>
+                                        <input
+                                            className="form-control"
+                                            type="password" id="confirmation" name="confirmation"
+                                            autoComplete='off'
+                                            {...register("confirmation", { 
+                                                required: { 
+                                                    value: true, 
+                                                    message: 'Le champ est obligatoire'
+                                                },
+                                                validate: {
+                                                    notEqual: (fieldValue) => {
+                                                        return (
+                                                            fieldValue === getValues('password') || 'La confirmation doît égale au mot de passe'
+                                                        );
+                                                    }
+                                                }
+                                            })}
+                                        />
+                                        {errors.confirmation && <div className="alert alert-danger mt-1">{errors.confirmation.message}</div>}
+                                    </div>
+                                    <div className="text-center">
+                                        <button type="submit" className="btn btn-primary">Envoyer</button>
+                                    </div>
+                                </form>
                             }
                             </section>
                         </div>

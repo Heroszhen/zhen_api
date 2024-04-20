@@ -16,3 +16,18 @@ export const getHeaders = async (method='', token=null) => {
         'Content-type': contentType
     }
 }
+
+/**
+ * 
+ * @param {string} value 
+ * @returns {void}
+ */
+export function copyToClipboard(value) {
+    let input = document.createElement("input");
+    document.body.appendChild(input);
+    input.value = value;
+    input.focus();
+    input.select();
+    document.execCommand('copy');
+    input.parentNode.removeChild(input);
+}

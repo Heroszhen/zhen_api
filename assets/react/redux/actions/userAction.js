@@ -5,6 +5,7 @@ export const GET_USERS = "get_users";
 export const GET_USER = "get_user";
 export const ADD_USER = "add_user";
 export const UPDATE_USER = "update_user";
+export const DELETE_USER = "delete_user";
 const ROUTE_PREFIX = "/api/users";
 
 export const asyncGetUsers = () => {
@@ -58,6 +59,57 @@ export const asyncAddUser = (user) => async (dispatch) => {
         } else {
             dispatch({ type: ADD_MSG, payload: {type: TYPE_SUCCESS, messages:[]} });
             dispatch({ type: ADD_USER, payload: json });
+        } 
+    })
+}
+
+export const asyncUpdateUserPassword = (id, data) => async (dispatch) => {
+    const headers = await getHeaders('patch');
+    fetch(`${ROUTE_PREFIX}/${id}/password`, {
+        headers: headers,
+        method: 'PATCH',
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(json => {
+        if (json['violations'] !== undefined) {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_ERROR, messages:json['violations']} });
+        } else {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_SUCCESS, messages:[]} });
+        } 
+    });
+}
+
+export const asyncDeleteUser = (id) => async (dispatch) => {
+    const headers = await getHeaders();
+    fetch(`${ROUTE_PREFIX}/${id}`, {
+        headers: headers,
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (response.status === 204) {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_SUCCESS, messages:[]} });
+            dispatch({ type: DELETE_USER, payload: {id: id}});
+        } else {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_ERROR, messages:[{message: response.statusText}]} });
+        }
+    });
+}
+
+export const asyncUpdateUserApiKey = (id, data) => async (dispatch) => {
+    const headers = await getHeaders('patch');
+    fetch(`${ROUTE_PREFIX}/${id}/apikey`, {
+        headers: headers,
+        method: 'PATCH',
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(json => {
+        if (json['violations'] !== undefined) {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_ERROR, messages:json['violations']} });
+        } else {
+            dispatch({ type: ADD_MSG, payload: {type: TYPE_SUCCESS, messages:['Copié dans le presse-papier']} });
+            navigator.clipboard.writeText(json['apiKey']);
         } 
     })
 }

@@ -11,6 +11,8 @@ use App\Traits\DateTrait;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Controller\API\User\UpdateUserPasswordController;
+use App\Controller\API\User\UpdateUserApiKeyController;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -33,9 +35,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         "patch_update_password"={
  *              "method"="PATCH",
  *              "path"="/users/{id}/password",
- *              "controller"=App\Controller\API\User\UpdateUserPasswordController::class,
+ *              "controller"=UpdateUserPasswordController::class,
  *              "denormalization_context"={"groups"={"pwd:input"}},
- *         }
+ *         },
+ *         "patch_update_apikey"={
+ *              "method"="PATCH",
+ *              "path"="/users/{id}/apikey",
+ *              "controller"=UpdateUserApiKeyController::class,
+ *              "normalization_context"={"groups"={"apikey:output"}},
+ *         },
+ *         "delete"={}
  *      }
  * )
  */
@@ -78,6 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"apikey:output"})
      */
     private $apiKey;
 
