@@ -9,6 +9,7 @@ use App\Service\UtilService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class ListS3FolderController extends AbstractController
@@ -64,6 +65,6 @@ final class ListS3FolderController extends AbstractController
 
         $info['hydra:member'] = $this->s3Service->listFolder($content['bucket'], $content['path'], true);
         
-        return $this->json($info);
+        return $this->json($info, Response::HTTP_OK);
     }
 }

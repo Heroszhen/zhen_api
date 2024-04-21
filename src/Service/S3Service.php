@@ -65,7 +65,7 @@ class S3Service
             }
             $elm['updated'] = $object['LastModified']->format('Y-m-d h:i:s');
 
-            $tab[$key] = $elm;
+            $tab[] = $elm;
         }
 
         return $tab;

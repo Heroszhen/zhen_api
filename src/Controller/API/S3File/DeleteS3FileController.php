@@ -9,6 +9,7 @@ use App\Service\UtilService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -63,6 +64,6 @@ final class DeleteS3FileController extends AbstractController
             $this->s3Service->deleteFile($content['bucket'], $content['path']);
         }
     
-        return $this->json($info);
+        return $this->json($info, Response::HTTP_NO_CONTENT);
     }
 }

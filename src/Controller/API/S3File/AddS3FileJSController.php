@@ -85,6 +85,6 @@ final class AddS3FileJSController extends AbstractController
             $info
         );
 
-        return $this->json($info);
+        return $this->json($info, Response::HTTP_CREATED);
     }
 }

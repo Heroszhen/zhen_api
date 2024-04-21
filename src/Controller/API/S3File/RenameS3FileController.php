@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Aws\Result;
+use Symfony\Component\HttpFoundation\Response;
 
 final class RenameS3FileController extends AbstractController
 {
@@ -86,6 +87,6 @@ final class RenameS3FileController extends AbstractController
             throw new BadRequestHttpException('There is an error');
         }
     
-        return $this->json($info);
+        return $this->json($info, Response::HTTP_CREATED);
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Aws\Result;
+use Symfony\Component\HttpFoundation\Response;
 
 final class RenameS3FolderController extends AbstractController
 {
@@ -75,6 +76,6 @@ final class RenameS3FolderController extends AbstractController
         $this->s3Service->deleteFolder($content['bucket'], $content['path']);
         $info['hydra:member'] = $this->s3Service->listFolder($content['bucket'], $content['newName']);
     
-        return $this->json($info);
+        return $this->json($info, Response::HTTP_CREATED);
     }
 }

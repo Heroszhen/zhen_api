@@ -9,6 +9,7 @@ use App\Service\UtilService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -60,6 +61,6 @@ final class GetS3FileUrlController extends AbstractController
 
         $info['url'] =  $this->s3Service->getFileUrl($content['bucket'], $content['path']);
         
-        return $this->json($info);
+        return $this->json($info, Response::HTTP_OK);
     }
 }

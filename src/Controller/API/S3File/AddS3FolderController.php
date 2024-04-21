@@ -9,6 +9,7 @@ use App\Service\UtilService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class AddS3FolderController extends AbstractController
@@ -64,6 +65,6 @@ final class AddS3FolderController extends AbstractController
         $info['name'] = $this->s3Service->getNameFromPath($content['path']);
         $info['fullName'] = $this->s3Service->getNameFromPath($content['path']);
         
-        return $this->json($info);
+        return $this->json($info, Response::HTTP_CREATED);
     }
 }
