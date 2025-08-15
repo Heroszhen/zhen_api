@@ -68,12 +68,12 @@ final class RenameS3FileController extends AbstractController
         
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if (!$result) {
-            throw new ElementExistingException('This element is not existing');
+            throw new ElementExistingException('This element does not exist');
         }
 
         $result = $this->s3Service->hasElement($content['bucket'], $content['newName']);
         if ($result) {
-            throw new ElementExistingException('The new path is existing');
+            throw new ElementExistingException('The new path does not exist');
         }
 
         /** @var Result $result */

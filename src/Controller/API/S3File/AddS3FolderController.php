@@ -57,7 +57,7 @@ final class AddS3FolderController extends AbstractController
         
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if ($result) {
-            throw new ElementExistingException('The folder is existing');
+            throw new ElementExistingException('The folder exists');
         }
         
         $this->s3Service->addOneFile($content['bucket'], $content['path']);

@@ -18,8 +18,8 @@ class S3Service
             'region' => 'eu-west-3',
             'version' => 'latest',
             'credentials' => array(
-                'key' => $_ENV['ACCESS_KEY_ID'],
-                'secret'  => $_ENV['SECRET_ACCESS_KEY'],
+                'key' => $_ENV['AWS_ACCESS_KEY_ID'],
+                'secret'  => $_ENV['AWS_SECRET_ACCESS_KEY'],
             )
         ]);
 
@@ -174,7 +174,7 @@ class S3Service
         }
     }
 
-    public function getFileUrl(string $bucket, string $path): string
+    public function getFileUrl(string $bucket, string $path, int $delay = 5): string
     {
         $cmd = $this->s3Client->getCommand('GetObject', [
             'Bucket' => $bucket,
@@ -182,7 +182,7 @@ class S3Service
             'ACL' => 'public-read',
         ]);
         
-        $request = $this->s3Client->createPresignedRequest($cmd, '+30 minutes');
+        $request = $this->s3Client->createPresignedRequest($cmd, "+{$delay} minutes");
         
         // Get the actual presigned-url
         $presignedUrl = (string)$request->getUri();

@@ -55,7 +55,7 @@ final class DeleteS3FileController extends AbstractController
         
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if (!$result) {
-            throw new ElementExistingException('This element is not existing');
+            throw new ElementExistingException('This element does not exist');
         }
 
         if ($this->utilService->strEndsWith($content['path'], '/')) {

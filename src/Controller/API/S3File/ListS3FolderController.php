@@ -59,7 +59,7 @@ final class ListS3FolderController extends AbstractController
         if ('' !== $content['path']) {
             $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
             if (!$result) {
-                throw new ElementExistingException('The folder is not existing');
+                throw new ElementExistingException('The folder does not exist');
             }
         }
 
