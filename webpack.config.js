@@ -63,7 +63,7 @@ Encore
     .enableSassLoader()
     // .addPlugin(new CopyPlugin({
     //     patterns: [
-    //         {from: 'assets/react/assets', to: 'assets'},
+    //         {from: 'assets/static', to: 'static'},
     //     ]
     // }))
 
