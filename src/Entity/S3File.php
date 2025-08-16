@@ -20,6 +20,13 @@ use App\Validator as AppAssert;
 /**
  * @ORM\Entity(repositoryClass=S3FileRepository::class)
  * 
+ * @ORM\Table(name="s3_file")
+ * @ORM\InheritanceType("JOINED") // ou "SINGLE_TABLE"
+ * @ORM\DiscriminatorMap({
+ *   "s3" = "App\Entity\S3File",
+ *   "gdrive" = "App\Entity\GoogleDriveFile"
+ * })
+ * 
  * @ApiResource(
  *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
  *      collectionOperations={
@@ -67,7 +74,7 @@ use App\Validator as AppAssert;
  *         "post_list_folder"={
  *              "access_control"="is_granted('ROLE_ADMIN')",
  *              "method" = "POST",
- *              "path" = "/s3files/list_folder",
+ *              "path" = "/s3files/list-folder",
  *              "controller" = ListS3FolderController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "openapi_context"={
@@ -151,7 +158,7 @@ class S3File
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(allowNull=false)
-     * @AppAssert\CheckS3Bucket
+     * //@AppAssert\CheckS3Bucket
      * @Groups({"input"})
      */
     private $bucket;
@@ -171,31 +178,37 @@ class S3File
 
     // --------------------------file info from aws s3-------------------------
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $name;
 
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $fullName;
 
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $extension;
 
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private $size;
 
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $updated;
 
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="text", nullable=true)
      */
     private $url;
@@ -203,6 +216,13 @@ class S3File
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getFile(): ?File
