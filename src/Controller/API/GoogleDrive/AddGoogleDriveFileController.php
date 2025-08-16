@@ -5,7 +5,7 @@ namespace App\Controller\API\GoogleDrive;
 use App\Service\GoogleDriveService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Dto\GoogleDriveFileAddFolderDto;
-use Error;
+use App\Entity\GoogleDriveFile;
 use Google\Service\Drive\DriveFile;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -24,7 +24,7 @@ class AddGoogleDriveFolderController extends AbstractController
         $this->validator = $validator;
     }
 
-    public function __invoke(GoogleDriveFileAddFolderDto $data)
+    public function __invoke(GoogleDriveFileAddFolderDto $data): GoogleDriveFile
     {
         $errors = $this->validator->validate($data);
         if (count($errors) > 0) {
@@ -40,7 +40,7 @@ class AddGoogleDriveFolderController extends AbstractController
 
         $folder = $this->gDriveService->addFolder($data->name, $data->parents);
         if (!$folder instanceof DriveFile) {
-            throw new Error('Error');
+            throw new \Exception('Error');
         }
 
         return $this->gDriveService->setGoogleDriveFile($folder);

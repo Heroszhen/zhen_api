@@ -9,6 +9,7 @@ use Google\Service\Drive;
 use Google\Service\Drive\DriveFile;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use App\Service\UtilService;
+use Google\Service\Exception;
 
 class GoogleDriveService
 {
@@ -102,5 +103,27 @@ class GoogleDriveService
         $files = $response->getFiles();
 
         return count($files) > 0 ? true : false;
+    }
+
+    /**
+     * can only remove files that are created by the service account
+     */
+    public function deleteFileOrFolder(string $fileId): void
+    {
+        /*
+        try {
+            $this->drive->files->delete($fileId, [
+                'supportsAllDrives' => true
+            ]);
+        } catch (Exception $e) {
+            throw new \RuntimeException("Suppression error: " . $e->getMessage());
+        }*/
+
+        $meta = new DriveFile(['trashed' => true]);
+
+        $this->drive->files->update($fileId, $meta, [
+            'supportsAllDrives' => true,
+            'fields' => 'id,name,trashed,parents,webViewLink'
+        ]);
     }
 }

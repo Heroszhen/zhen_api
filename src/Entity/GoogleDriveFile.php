@@ -9,6 +9,7 @@ use App\Controller\API\GoogleDrive\ListGoogleDriveFolderController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Dto\GoogleDriveFileAddFolderDto;
 use App\Controller\API\GoogleDrive\AddGoogleDriveFolderController;
+use App\Controller\API\GoogleDrive\DeleteGoogleDriveFolderController;
 
 /**
  * @ORM\Entity(repositoryClass=GoogleDriveFileRepository::class)
@@ -36,6 +37,14 @@ use App\Controller\API\GoogleDrive\AddGoogleDriveFolderController;
  *                   "summary"="add one folder",
  *              },
  *          },
+ *          "post_delete_file"={
+ *              "method"="POST",
+ *              "path"="/googledrivefiles/delete",
+ *              "controller"=DeleteGoogleDriveFolderController::class,
+ *              "openapi_context"={
+ *                   "summary"="delete one file or one folder",
+ *              },
+ *         },
  *      },
  *      itemOperations={
  *         "get"={
