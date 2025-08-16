@@ -33,7 +33,7 @@ use App\Validator as AppAssert;
  *         "get"={},
  *         "post_rename_folder"={
  *              "method" = "POST",
- *              "path" = "/s3files/rename_folder",
+ *              "path" = "/s3files/rename-folder",
  *              "controller" = RenameS3FolderController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "validation_groups"={"check_path", "check_newname"},
@@ -43,7 +43,7 @@ use App\Validator as AppAssert;
  *         },
  *         "post_rename_file"={
  *              "method" = "POST",
- *              "path" = "/s3files/rename_file",
+ *              "path" = "/s3files/rename-file",
  *              "controller" = RenameS3FileController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "validation_groups"={"check_path", "check_newname"},
@@ -63,7 +63,7 @@ use App\Validator as AppAssert;
  *         },
  *         "post_get_file_url"={
  *              "method" = "POST",
- *              "path" = "/s3files/file_url",
+ *              "path" = "/s3files/file-url",
  *              "controller" = GetS3FileUrlController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "validation_groups"={"check_path"},

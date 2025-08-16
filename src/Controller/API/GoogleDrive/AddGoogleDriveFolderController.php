@@ -34,7 +34,11 @@ class AddGoogleDriveFolderController extends AbstractController
             }
         }
 
-        $folder = $this->gDriveService->addFolder($data);
+        if ($this->gDriveService->hasElement($data->name, $data->parents)) {
+            throw new BadRequestException("{$data->name} exists");
+        }
+
+        $folder = $this->gDriveService->addFolder($data->name, $data->parents);
         if (!$folder instanceof DriveFile) {
             throw new Error('Error');
         }

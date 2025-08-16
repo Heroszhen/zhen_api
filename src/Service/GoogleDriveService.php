@@ -68,18 +68,39 @@ class GoogleDriveService
         return $file;
     }
 
-    public function addFolder(GoogleDriveFileAddFolderDto $data): DriveFile
+    public function addFolder(string $name, string $parent): DriveFile
     {
         $fileMetadata = new DriveFile([
-            'name' => $data->name,
+            'name' => $name,
             'mimeType' => 'application/vnd.google-apps.folder',
         ]);
-        $fileMetadata->setParents([$data->parents]);
+        $fileMetadata->setParents([$parent]);
 
         $folder = $this->drive->files->create($fileMetadata, [
             'fields' => self::FILE_FIELDS
         ]);
 
         return $folder;
+    }
+
+    public function hasElement(string $name, string $parent): bool
+    {
+        $queryParts = [
+            "name = '" . addslashes($name) . "'",
+            "trashed = false"
+        ];
+        $queryParts[] = sprintf("'%s' in parents", $parent);
+        $query = implode(" and ", $queryParts);
+
+        $response = $this->drive->files->listFiles([
+            'q' => $query,
+            'fields' => 'files(id,name,mimeType)',
+            'supportsAllDrives' => true,
+            'includeItemsFromAllDrives' => true,
+        ]);
+
+        $files = $response->getFiles();
+
+        return count($files) > 0 ? true : false;
     }
 }
