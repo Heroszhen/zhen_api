@@ -69,7 +69,7 @@ final class RenameS3FolderController extends AbstractController
         
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if (!$result) {
-            throw new ElementExistingException('This element is not existing');
+            throw new ElementExistingException('This element does not exist');
         }
     
         $this->s3Service->copyFolder($content['bucket'], $content['path'], $content['newName']);

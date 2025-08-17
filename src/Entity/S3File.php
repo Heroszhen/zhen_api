@@ -25,9 +25,9 @@ use App\Validator as AppAssert;
  *      collectionOperations={
  *         "get"={},
  *         "post_rename_folder"={
- *              "method" = "POST",
- *              "path" = "/s3files/rename_folder",
- *              "controller" = RenameS3FolderController::class,
+ *              "method"="POST",
+ *              "path"="/s3files/rename-folder",
+ *              "controller"=RenameS3FolderController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "validation_groups"={"check_path", "check_newname"},
  *              "openapi_context"={
@@ -35,9 +35,9 @@ use App\Validator as AppAssert;
  *              },
  *         },
  *         "post_rename_file"={
- *              "method" = "POST",
- *              "path" = "/s3files/rename_file",
- *              "controller" = RenameS3FileController::class,
+ *              "method"="POST",
+ *              "path"="/s3files/rename-file",
+ *              "controller"=RenameS3FileController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "validation_groups"={"check_path", "check_newname"},
  *              "openapi_context"={
@@ -45,9 +45,9 @@ use App\Validator as AppAssert;
  *              },
  *         },
  *         "post_delete_file"={
- *              "method" = "POST",
- *              "path" = "/s3files/delete",
- *              "controller" = DeleteS3FileController::class,
+ *              "method"="POST",
+ *              "path"="/s3files/delete",
+ *              "controller"=DeleteS3FileController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "validation_groups"={"check_path"},
  *              "openapi_context"={
@@ -55,9 +55,9 @@ use App\Validator as AppAssert;
  *              },
  *         },
  *         "post_get_file_url"={
- *              "method" = "POST",
- *              "path" = "/s3files/file_url",
- *              "controller" = GetS3FileUrlController::class,
+ *              "method"="POST",
+ *              "path"="/s3files/file-url",
+ *              "controller"=GetS3FileUrlController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "validation_groups"={"check_path"},
  *              "openapi_context"={
@@ -66,27 +66,27 @@ use App\Validator as AppAssert;
  *         },
  *         "post_list_folder"={
  *              "access_control"="is_granted('ROLE_ADMIN')",
- *              "method" = "POST",
- *              "path" = "/s3files/list_folder",
- *              "controller" = ListS3FolderController::class,
+ *              "method"="POST",
+ *              "path"="/s3files/list-folder",
+ *              "controller"=ListS3FolderController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "openapi_context"={
  *                   "summary"="get elements of one folder",
  *              },
  *         },
  *         "post_add_folder"={
- *              "method" = "POST",
- *              "path" = "/s3files/folder",
- *              "controller" = AddS3FolderController::class,
+ *              "method"="POST",
+ *              "path"="/s3files/folder",
+ *              "controller"=AddS3FolderController::class,
  *              "denormalization_context"={"groups"={"input"}},
  *              "openapi_context"={
  *                   "summary"="add one folder",
  *              },
  *          },
  *          "post_add_file" = {
- *              "method" = "POST",
- *              "path" = "/s3files/file",
- *              "controller" = AddS3FileJSController::class,
+ *              "method"="POST",
+ *              "path"="/s3files/file",
+ *              "controller"=AddS3FileJSController::class,
  *              "deserialize"=false,
  *              "openapi_context"={
  *                 "summary"="add file with FormDate in js",

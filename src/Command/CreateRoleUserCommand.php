@@ -46,7 +46,7 @@ class CreateRoleUserCommand extends Command
         $email = $input->getArgument('email');
         $found = $this->manager->getRepository(User::class)->findOneBy(['email' => $email]);
         if ($found instanceof User) {
-            $io->error("'{$email}' is existing.");
+            $io->error("'{$email}' does not exist.");
 
             return Command::FAILURE;
         }
