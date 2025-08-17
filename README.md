@@ -5,4 +5,4 @@
 <pre>php bin/console app:create-role-user < email > < password ></pre>
 
 ### start server
-composer run server --timeout=0
+php composer.phar run server --timeout=0

@@ -4,45 +4,51 @@ namespace App\Controller\API\GoogleDrive;
 
 use App\Service\GoogleDriveService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Dto\GoogleDriveFileAddFolderDto;
 use App\Entity\GoogleDriveFile;
 use Google\Service\Drive\DriveFile;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
 
-class AddGoogleDriveFolderController extends AbstractController
+class AddGoogleDriveFileController extends AbstractController
 {
     private GoogleDriveService $gDriveService;
-    private ValidatorInterface $validator;
 
     public function __construct(
-        GoogleDriveService $gDriveService,
-        ValidatorInterface $validator
+        GoogleDriveService $gDriveService
     )
     {
         $this->gDriveService = $gDriveService;
-        $this->validator = $validator;
     }
 
-    public function __invoke(GoogleDriveFileAddFolderDto $data): GoogleDriveFile
+    public function __invoke(Request $request)
     {
-        $errors = $this->validator->validate($data);
-        if (count($errors) > 0) {
-            /** @var ConstraintViolation $error */
-            foreach ($errors as $error) {
-                throw new BadRequestException("{$error->getPropertyPath()}: {$error->getMessage()}");
-            }
+        $form = $request->request;
+        $file = $request->files->get('file');
+        
+        if (null === $file) {
+            throw new BadRequestHttpException('file is required');
         }
 
-        if ($this->gDriveService->hasElement($data->name, $data->parents)) {
-            throw new BadRequestException("{$data->name} exists");
+        if (empty($form->get('parent'))) {
+            throw new BadRequestHttpException('parent is required');
         }
 
-        $folder = $this->gDriveService->addFolder($data->name, $data->parents);
-        if (!$folder instanceof DriveFile) {
-            throw new \Exception('Error');
+        /** @var UploadedFile $file */
+        $filename = $file->getClientOriginalName();
+        if (!empty($form->get('filename'))) {
+            $filename = $form->get('filename');   
         }
 
-        return $this->gDriveService->setGoogleDriveFile($folder);
+        if ($this->gDriveService->hasElement($filename, $form->get('parent'))) {
+            $filename = uniqid().'_'.$filename;
+        }
+
+        $file = $this->gDriveService->addFile($file, $filename, $form->get('parent'));
+        
+        return $this->gDriveService->setGoogleDriveFile($file);
     }
 }

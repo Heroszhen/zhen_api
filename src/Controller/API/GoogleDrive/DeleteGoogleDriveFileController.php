@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class DeleteGoogleDriveFolderController extends AbstractController
+class DeleteGoogleDriveFileController extends AbstractController
 {
     private GoogleDriveService $gDriveService;
 

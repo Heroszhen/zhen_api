@@ -9,7 +9,9 @@ use Google\Service\Drive;
 use Google\Service\Drive\DriveFile;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use App\Service\UtilService;
-use Google\Service\Exception;
+use Google\Service\Exception as GoogleException;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class GoogleDriveService
 {
@@ -18,14 +20,17 @@ class GoogleDriveService
     private ParameterBagInterface $parameterBag;
     private UtilService $utilService;
     private const FILE_FIELDS = 'id,name,mimeType,parents,modifiedTime,webViewLink,size';
+    private LoggerInterface $logger;
 
     public function __construct(
         ParameterBagInterface $parameterBag,
-        UtilService $utilService
+        UtilService $utilService,
+        LoggerInterface $logger
     )
     {
         $this->parameterBag = $parameterBag;
         $this->utilService = $utilService;
+        $this->logger = $logger;
 
         $this->client = new Client();
         $this->client->setApplicationName($_ENV['GOOGLE_SERVICE_ACCOUNT_NAME']);
@@ -125,5 +130,33 @@ class GoogleDriveService
             'supportsAllDrives' => true,
             'fields' => 'id,name,trashed,parents,webViewLink'
         ]);
+    }
+
+    function addFile(UploadedFile $file, string $filename, string $parent): DriveFile
+    {
+        $meta = new DriveFile([
+            'name'    => $filename,
+            'parents' => [$parent],
+        ]);
+
+        //5-10 Mo
+        $content  = file_get_contents($file->getPathname());
+        $mimeType = $file->getClientMimeType();
+
+        try {
+            $file = $this->drive->files->create($meta, [
+                'data' => $content,
+                'mimeType' => $mimeType,
+                'uploadType' => 'multipart',
+                'fields' => self::FILE_FIELDS,
+                'supportsAllDrives' => true, // utile si parent dans un Drive partagé
+            ]);
+
+            return $file;
+        } catch (GoogleException $e) {
+            throw new \Exception("add GoogleDriveFile : {$e->getMessage()}");
+        } catch (\Throwable $e) {
+            throw new \Exception("add GoogleDriveFile : {$e->getMessage()}");
+        }
     }
 }

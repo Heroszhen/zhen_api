@@ -9,7 +9,7 @@ class GoogleDriveFileAddFolderDto
     /**
      * @Assert\NotBlank(allowNull=false)
      */
-    public string $parents;
+    public string $parent;
 
     /**
      * @Assert\NotBlank(allowNull=false)

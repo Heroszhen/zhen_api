@@ -5,11 +5,12 @@ namespace App\Entity;
 use App\Repository\GoogleDriveFileRepository;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\API\GoogleDrive\AddGoogleDriveFileController;
 use App\Controller\API\GoogleDrive\ListGoogleDriveFolderController;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Dto\GoogleDriveFileAddFolderDto;
 use App\Controller\API\GoogleDrive\AddGoogleDriveFolderController;
-use App\Controller\API\GoogleDrive\DeleteGoogleDriveFolderController;
+use App\Controller\API\GoogleDrive\DeleteGoogleDriveFileController;
 
 /**
  * @ORM\Entity(repositoryClass=GoogleDriveFileRepository::class)
@@ -40,11 +41,17 @@ use App\Controller\API\GoogleDrive\DeleteGoogleDriveFolderController;
  *          "post_delete_file"={
  *              "method"="POST",
  *              "path"="/googledrivefiles/delete",
- *              "controller"=DeleteGoogleDriveFolderController::class,
+ *              "controller"=DeleteGoogleDriveFileController::class,
  *              "openapi_context"={
  *                   "summary"="delete one file or one folder",
  *              },
  *         },
+ *         "post_add_file"={
+ *              "method"="POST",
+ *              "path"="/googledrivefiles/file",
+ *              "controller"=AddGoogleDriveFileController::class,
+ *              "deserialize"=false,
+ *         }
  *      },
  *      itemOperations={
  *         "get"={
