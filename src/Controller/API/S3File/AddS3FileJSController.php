@@ -62,7 +62,7 @@ final class AddS3FileJSController extends AbstractController
         $oldName = $file->getClientOriginalName();
         $tab = explode('.', $oldName);
         $extension = end($tab);
-        $newName = (null === $form->get('newName') || '' === $form->get('newName')) ? $tab[0] : $form->get('newName');
+        $newName = empty($form->get('newName')) ? $tab[0] : $form->get('newName');
         $newName = "{$this->utilService->getUniqid()}_{$newName}.{$extension}";
         $fileUrl = $file->getPathName();
         $type = mime_content_type($fileUrl);
