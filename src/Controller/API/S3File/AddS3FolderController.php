@@ -3,30 +3,36 @@
 namespace App\Controller\API\S3File;
 
 use App\Entity\S3File;
-use App\Exception\AWS\ElementExistingException;
 use App\Service\S3Service;
 use App\Service\UtilService;
+use Aws\Result;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class AddS3FolderController extends AbstractController
 {
-    private $validator;
-    private $s3Service;
-    private $utilService;
+    private ValidatorInterface $validator;
+    private S3Service $s3Service;
+    private UtilService $utilService;
+    private NormalizerInterface $normalizer;
 
     public function __construct(
         ValidatorInterface $validator, 
         S3Service $s3Service,
-        UtilService $utilService
+        UtilService $utilService,
+        NormalizerInterface $normalizer
     )
     {
         $this->validator = $validator;
         $this->s3Service = $s3Service;
         $this->utilService = $utilService;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -34,12 +40,8 @@ final class AddS3FolderController extends AbstractController
      */
     public function __invoke(Request $request)
     {
-        $info = [
-            "@context" => "/api/contexts/S3File",
-            "@type" => "S3File",
-            "@id" => "/api/s3files/folder",
-        ];
-        
+        $info = $this->s3Service->getHydraMetadata();
+      
         $content = json_decode($request->getContent(), true);
         if(!$this->utilService->strEndsWith($content['path'], '/')) {
             $content['path'] .= '/';
@@ -52,19 +54,26 @@ final class AddS3FolderController extends AbstractController
 
         $errors = $this->validator->validate($s3file);
         if (0 !== $errors->count()) {
-            return $s3file;
+            throw new BadRequestHttpException((string)$errors);
         } 
-        
+
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if ($result) {
-            throw new ElementExistingException('The folder exists');
+            throw new BadRequestHttpException('The folder exists');
         }
         
-        $this->s3Service->addOneFile($content['bucket'], $content['path']);
+        $result = $this->s3Service->addOneFile($content['bucket'], $content['path']);
+        if (!$result instanceof Result) {
+            throw new Exception('Error');
+        }
 
-        $info['name'] = $this->s3Service->getNameFromPath($content['path']);
-        $info['fullName'] = $this->s3Service->getNameFromPath($content['path']);
-        
-        return $this->json($info, Response::HTTP_CREATED);
+        $s3file
+            ->setId(1)
+            ->setName($this->s3Service->getNameFromPath($content['path']))
+            ->setFullName($content['path'])
+        ;
+        $data = $this->normalizer->normalize($s3file, null, ['groups' => ['read']]);  
+
+        return $this->json(array_merge($this->s3Service->getHydraMetadata(), $data), Response::HTTP_CREATED);
     }
 }

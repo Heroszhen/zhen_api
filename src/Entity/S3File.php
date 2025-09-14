@@ -21,7 +21,10 @@ use App\Validator as AppAssert;
  * @ORM\Entity(repositoryClass=S3FileRepository::class)
  * 
  * @ApiResource(
- *      attributes={"access_control"="is_granted('ROLE_ADMIN')"},
+ *      attributes={
+ *          "access_control"="is_granted('ROLE_ADMIN')",
+ *          "normalization_context"={"groups"={"read"}},
+ *      },
  *      collectionOperations={
  *         "get"={},
  *         "post_rename_folder"={
@@ -152,13 +155,13 @@ class S3File
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank(allowNull=false)
      * @AppAssert\CheckS3Bucket
-     * @Groups({"input"})
+     * @Groups({"input", "read"})
      */
     private $bucket;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"input"})
+     * @Groups({"input", "read"})
      * @Assert\NotBlank(allowNull=false, groups={"check_path"})
      */
     private $path = '';
@@ -172,37 +175,50 @@ class S3File
     // --------------------------file info from aws s3-------------------------
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read"})
      */
     private $fullName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read"})
      */
-    private $extension;
+    private $extension = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read"})
      */
     private $size;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read"})
      */
     private $updated;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"read"})
      */
     private $url;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+        
+        return $this;
     }
 
     public function getFile(): ?File

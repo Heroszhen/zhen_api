@@ -49,6 +49,7 @@ class S3Service
             if ($level1 && !$this->isChild($path, $object['Key'])) {
                 continue;
             }
+            
             $elm = [];
             $elm['name'] = $this->getNameFromPath($object['Key']);
             $elm['fullName'] = $object['Key'];
@@ -213,6 +214,8 @@ class S3Service
         foreach($folders as $item) {
             $this->deleteFile($bucket, $item["fullName"]);
         }
+
+        $this->deleteFile($bucket, $path);
     }
 
     public function copyFile(string $bucket, string $oldPath, string $newPath): Result
@@ -261,5 +264,14 @@ class S3Service
                 $this->addOneFile($bucket, $newElmPath);
             }
         }
+    }
+
+    public function getHydraMetadata(): array
+    {
+        return [
+            "@context" => "/api/contexts/S3File",
+            "@type" => "S3File",
+            "@id" => "/api/s3files/folder",
+        ];
     }
 }

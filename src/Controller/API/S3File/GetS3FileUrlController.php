@@ -29,11 +29,7 @@ final class GetS3FileUrlController extends AbstractController
      */
     public function __invoke(Request $request)
     {
-        $info = [
-            "@context" => "/api/contexts/S3File",
-            "@type" => "S3File",
-            "@id" => "/api/s3files/file_url",
-        ];
+        $info = $this->s3Service->getHydraMetadata();
         
         $content = json_decode($request->getContent(), true);
         

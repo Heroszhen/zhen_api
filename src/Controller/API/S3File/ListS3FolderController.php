@@ -3,10 +3,10 @@
 namespace App\Controller\API\S3File;
 
 use App\Entity\S3File;
-use App\Exception\AWS\ElementExistingException;
 use App\Service\S3Service;
 use App\Service\UtilService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,17 +34,12 @@ final class ListS3FolderController extends AbstractController
      */
     public function __invoke(Request $request)
     {
-        $info = [
-            "@context" => "/api/contexts/S3File",
-            "@type" => "S3File",
-            "@id" => "/api/s3files/list_folder",
-            "hydra:member" => []
-        ];
-        
         $content = json_decode($request->getContent(), true);
+
         if('' !== $content['path'] && !$this->utilService->strEndsWith($content['path'], '/')) {
             $content['path'] .= '/';
         }
+
         $s3file = new S3File();
         $s3file
             ->setBucket($content['bucket'])
@@ -53,16 +48,17 @@ final class ListS3FolderController extends AbstractController
 
         $errors = $this->validator->validate($s3file);
         if (0 !== $errors->count()) {
-            return $s3file;
+            throw new BadRequestHttpException((string)$errors);
         } 
         
         if ('' !== $content['path']) {
             $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
             if (!$result) {
-                throw new ElementExistingException('The folder does not exist');
+                throw new BadRequestHttpException('The folder does not exist');
             }
         }
 
+        $info = $this->s3Service->getHydraMetadata();
         $info['hydra:member'] = $this->s3Service->listFolder($content['bucket'], $content['path'], true);
         
         return $this->json($info, Response::HTTP_OK);

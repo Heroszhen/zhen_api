@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -55,7 +54,7 @@ final class AddS3FileJSController extends AbstractController
 
         $errors = $this->validator->validate($s3file);
         if (0 !== $errors->count()) {
-            return $s3file;
+            throw new BadRequestHttpException((string)$errors);
         } 
 
         /** @var UploadedFile $file */
@@ -77,11 +76,7 @@ final class AddS3FileJSController extends AbstractController
             }
         }
         $info = array_merge(
-            [
-                "@context" => "/api/contexts/S3File",
-                "@type" => "S3File",
-                "@id" => "/api/s3files/file",
-            ],
+            $this->s3Service->getHydraMetadata(),
             $info
         );
 

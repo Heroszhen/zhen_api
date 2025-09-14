@@ -3,7 +3,6 @@
 namespace App\Controller\API\S3File;
 
 use App\Entity\S3File;
-use App\Exception\AWS\ElementExistingException;
 use App\Service\S3Service;
 use App\Service\UtilService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,14 +33,9 @@ final class DeleteS3FileController extends AbstractController
      * @return S3File|JsonResponse 
      */
     public function __invoke(Request $request)
-    {
-        $info = [
-            "@context" => "/api/contexts/S3File",
-            "@type" => "S3File",
-            "@id" => "/api/s3files/delete",
-        ];
-        
+    { 
         $content = json_decode($request->getContent(), true);
+
         $s3file = new S3File();
         $s3file
             ->setBucket($content['bucket'])
@@ -50,12 +44,12 @@ final class DeleteS3FileController extends AbstractController
 
         $errors = $this->validator->validate($s3file, null, ['check_path']);
         if (0 !== $errors->count()) {
-            return $s3file;
+            throw new BadRequestHttpException((string)$errors);
         } 
         
         $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
         if (!$result) {
-            throw new ElementExistingException('This element does not exist');
+            throw new BadRequestHttpException('This element does not exist');
         }
 
         if ($this->utilService->strEndsWith($content['path'], '/')) {
@@ -64,6 +58,6 @@ final class DeleteS3FileController extends AbstractController
             $this->s3Service->deleteFile($content['bucket'], $content['path']);
         }
     
-        return $this->json($info, Response::HTTP_NO_CONTENT);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }
