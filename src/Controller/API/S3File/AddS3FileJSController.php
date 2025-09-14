@@ -31,10 +31,7 @@ final class AddS3FileJSController extends AbstractController
         $this->utilService = $utilService;
     }
 
-    /**
-     * @return S3File|JsonResponse 
-     */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
         $form = $request->request;
         $file = $request->files->get('file');
@@ -42,13 +39,18 @@ final class AddS3FileJSController extends AbstractController
         if (null === $file) {
             throw new BadRequestHttpException('"file" is required');
         }
+
+        $path = $form->get('path');
+        if(!$this->utilService->strEndsWith($path, '/')) {
+            $path .= '/';
+        }
         
         $s3file = new S3File();
         /** @var File $file */
         $s3file
             ->setFile($file)
             ->setBucket($form->get('bucket'))
-            ->setPath($form->get('path'))
+            ->setPath($path)
             ->setNewName($form->get('newName'))
         ;
 
@@ -60,17 +62,26 @@ final class AddS3FileJSController extends AbstractController
         /** @var UploadedFile $file */
         $oldName = $file->getClientOriginalName();
         $tab = explode('.', $oldName);
-        $extension = end($tab);
+        $extension = end($tab);/*
         $newName = empty($form->get('newName')) ? $tab[0] : $form->get('newName');
         $newName = "{$this->utilService->getUniqid()}_{$newName}.{$extension}";
         $fileUrl = $file->getPathName();
         $type = mime_content_type($fileUrl);
-        $this->s3Service->addOneFile($s3file->getBucket(), $s3file->getPath() . $newName, $fileUrl, $type);
+        $this->s3Service->addOneFile($s3file->getBucket(), $s3file->getPath() . $newName, $fileUrl, $type);*/
+        $filename = empty($s3file->getNewName()) ? $oldName : "{$form->get('newName')}.{$extension}";
+        $result = $this->s3Service->hasElement($s3file->getBucket(), $s3file->getPath().$filename);
+        if ($result) {
+            throw new BadRequestHttpException("File {$filename} exists.");
+        }
+
+        $fileUrl = $file->getPathName();
+        $type = mime_content_type($fileUrl);
+        $this->s3Service->addOneFile($s3file->getBucket(), $s3file->getPath() . $filename, $fileUrl, $type);
 
         $tab = $this->s3Service->listFolder($s3file->getBucket(), $s3file->getPath(), true);
         $info = [];
         foreach($tab as $elm) {
-            if ($elm['name'] === $newName) {
+            if ($elm['name'] === $filename) {
                 $info = $elm;
                 break;
             }
