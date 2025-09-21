@@ -59,6 +59,8 @@ final class AddS3FileJSController extends AbstractController
             throw new BadRequestHttpException((string)$errors);
         } 
 
+        $this->s3Service->checkPathsInBucket($s3file->getBucket(), $s3file->getPath());
+
         /** @var UploadedFile $file */
         $oldName = $file->getClientOriginalName();
         $tab = explode('.', $oldName);

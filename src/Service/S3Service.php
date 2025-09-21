@@ -274,4 +274,20 @@ class S3Service
             "@id" => "/api/s3files/folder",
         ];
     }
+
+    public function checkPathsInBucket(string $bucket, string $path): void
+    {
+        $tab = explode('/', $path);
+        $str = '';
+        foreach ($tab as $folder) {
+            if ($str === '') {
+                continue;
+            }
+
+            $str .= $folder.'/';
+            if (!$this->hasElement($bucket, $str)) {
+                $this->addOneFile($bucket, $str);
+            }
+        }
+    }
 }
