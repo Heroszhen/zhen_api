@@ -21,7 +21,7 @@ class UtilService
     }
 
     /**
-     * strContains('abc', 'a')
+     * @exemple strContains('abc', 'a')
      */
     public function strContains(string $haystack, string $needle): bool
     {

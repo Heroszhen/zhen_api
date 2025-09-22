@@ -49,7 +49,7 @@ class S3Service
             if ($level1 && !$this->isChild($path, $object['Key'])) {
                 continue;
             }
-            
+
             $elm = [];
             $elm['name'] = $this->getNameFromPath($object['Key']);
             $elm['fullName'] = $object['Key'];
@@ -75,12 +75,12 @@ class S3Service
     public function isChild(string $path, string $filePath): bool
     {
         $rest = str_replace($path, '', $filePath, $count);
-        if ($this->utilService->strEndsWith($rest, '/')) {
+        if ($this->utilService->strEndsWith($rest, '/')) {//folder
             $tab = explode('/', $rest);
             if (count($tab) <= 2) {
                 return true;
             }
-        } else {
+        } else {//file
             if (!$this->utilService->strContains($rest, '/')) {
                 return true;
             }
@@ -280,8 +280,8 @@ class S3Service
         $tab = explode('/', $path);
         $str = '';
         foreach ($tab as $folder) {
-            if ($str === '') {
-                continue;
+            if ($folder === '') {
+                return;
             }
 
             $str .= $folder.'/';
