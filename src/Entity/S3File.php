@@ -13,6 +13,7 @@ use App\Controller\API\S3File\GetS3FileUrlController;
 use App\Controller\API\S3File\DeleteS3FileController;
 use App\Controller\API\S3File\RenameS3FileController;
 use App\Controller\API\S3File\RenameS3FolderController;
+use App\Controller\API\S3File\GetS3BucketController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as AppAssert;
@@ -84,6 +85,14 @@ use App\Validator as AppAssert;
  *              "denormalization_context"={"groups"={"input"}},
  *              "openapi_context"={
  *                   "summary"="add one folder",
+ *              },
+ *          },
+ *          "post_get_bucket"={
+ *              "method"="POST",
+ *              "path"="/s3files/bucket",
+ *              "controller"=GetS3BucketController::class,
+ *              "openapi_context"={
+ *                   "summary"="get one bucket",
  *              },
  *          },
  *          "post_add_file" = {

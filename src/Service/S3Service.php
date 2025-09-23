@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Dto\BucketDto;
 use Aws\Result;
 use Aws\S3\S3Client;
 use App\Service\UtilService;
@@ -289,5 +290,34 @@ class S3Service
                 $this->addOneFile($bucket, $str);
             }
         }
+    }
+
+    public function getBucketByFolder(string $bucket, string $path): BucketDto
+    {
+        $bucketDto = new BucketDto();
+        $bucketDto->bucket = $bucket;
+        $bucketDto->path = $path;
+
+        /** @var Result $result */
+        $result = $this->s3Client->listObjectsV2([
+            "Bucket" => $bucket,
+            "Prefix" => $path,
+            'Delimiter' => ""
+        ]);
+        foreach ($result->toArray()['Contents'] as $key => $elm) {
+            $bucketDto->size += (int)$elm['Size'];
+
+            if ($this->utilService->strEndsWith($elm['Key'], '/')) {
+                $bucketDto->nbFolders++;
+            } else {
+                $bucketDto->nbFiles++;
+
+                if ($this->utilService->strEndsWith($elm['Key'], '.pdf')) {
+                    $bucketDto->nbPDFs++;
+                }
+            }
+        }
+
+        return $bucketDto;
     }
 }

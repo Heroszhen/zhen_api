@@ -54,7 +54,7 @@ final class AddS3FileJSController extends AbstractController
             ->setNewName($form->get('newName'))
         ;
 
-        $errors = $this->validator->validate($s3file);
+        $errors = $this->validator->validate($s3file, null, ['check_path']);
         if (0 !== $errors->count()) {
             throw new BadRequestHttpException((string)$errors);
         } 

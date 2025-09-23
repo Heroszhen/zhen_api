@@ -13,11 +13,7 @@ class UtilService
     {
         $tab = explode($needle, $haystack);
 
-        if ('' === end($tab)) {
-            return true;
-        }
-
-        return false;
+        return '' === end($tab);
     }
 
     /**

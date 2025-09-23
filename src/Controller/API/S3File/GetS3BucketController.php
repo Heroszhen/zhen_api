@@ -2,37 +2,34 @@
 
 namespace App\Controller\API\S3File;
 
+use App\Dto\BucketDto;
 use App\Entity\S3File;
 use App\Service\S3Service;
 use App\Service\UtilService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ListS3FolderController extends AbstractController
+final class GetS3BucketController extends AbstractController
 {
-    private $validator;
     private $s3Service;
     private $utilService;
+    private $validator;
 
     public function __construct(
-        ValidatorInterface $validator, 
         S3Service $s3Service,
-        UtilService $utilService
+        UtilService $utilService,
+        ValidatorInterface $validator
     )
     {
-        $this->validator = $validator;
         $this->s3Service = $s3Service;
         $this->utilService = $utilService;
+        $this->validator = $validator;
     }
 
-    /**
-     * @return S3File|JsonResponse 
-     */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
         $content = json_decode($request->getContent(), true);
 
@@ -50,17 +47,18 @@ final class ListS3FolderController extends AbstractController
         if (0 !== $errors->count()) {
             throw new BadRequestHttpException((string)$errors);
         } 
-        
-        if ('' !== $content['path']) {
-            $result = $this->s3Service->hasElement($content['bucket'], $content['path']);
+
+        if ('/' !== $s3file->getPath()) {
+            $result = $this->s3Service->hasElement($s3file->getBucket(), $s3file->getPath());
             if (!$result) {
-                throw new BadRequestHttpException('The folder does not exist');
+                throw new BadRequestHttpException('This element does not exist');
             }
         }
 
-        $info = $this->s3Service->getHydraMetadata();
-        $info['hydra:member'] = $this->s3Service->listFolder($content['bucket'], $content['path'], true);
+        $s3file->setPath('/' === $content['path'] ? '' : $content['path']);
+        /**@var BucketDto $bucketDto */
+        $bucketDto = $this->s3Service->getBucketByFolder($s3file->getBucket(), $s3file->getPath());
         
-        return $this->json($info, Response::HTTP_OK);
+        return $this->json($bucketDto);
     }
 }
