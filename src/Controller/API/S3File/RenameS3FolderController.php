@@ -66,7 +66,7 @@ final class RenameS3FolderController extends AbstractController
         if (!$result) {
             throw new BadRequestHttpException('This element does not exist');
         }
-    
+
         $this->s3Service->copyFolder($content['bucket'], $content['path'], $content['newName']);
         $this->s3Service->deleteFolder($content['bucket'], $content['path']);
         $info['hydra:member'] = $this->s3Service->listFolder($content['bucket'], $content['newName']);
