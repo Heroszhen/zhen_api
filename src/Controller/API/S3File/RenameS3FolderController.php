@@ -13,22 +13,26 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Aws\Result;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class RenameS3FolderController extends AbstractController
 {
     private $validator;
     private $s3Service;
     private $utilService;
+    private NormalizerInterface $normalizer;
 
     public function __construct(
         ValidatorInterface $validator, 
         S3Service $s3Service,
-        UtilService $utilService
+        UtilService $utilService,
+        NormalizerInterface $normalizer
     )
     {
         $this->validator = $validator;
         $this->s3Service = $s3Service;
         $this->utilService = $utilService;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -69,8 +73,16 @@ final class RenameS3FolderController extends AbstractController
 
         $this->s3Service->copyFolder($content['bucket'], $content['path'], $content['newName']);
         $this->s3Service->deleteFolder($content['bucket'], $content['path']);
-        $info['hydra:member'] = $this->s3Service->listFolder($content['bucket'], $content['newName']);
+        
+        $s3file
+            ->setId(1)
+            ->setName($this->s3Service->getNameFromPath($content['path']))
+            ->setFullName($content['path'])
+            ->setSize(0)
+            ->setUpdated((new \DateTime())->format('Y-m-d h:s:i'));
+        ;
+        $data = $this->normalizer->normalize($s3file, null, ['groups' => ['read']]);
     
-        return $this->json($info, Response::HTTP_CREATED);
+        return $this->json(array_merge($this->s3Service->getHydraMetadata(), $data), Response::HTTP_CREATED);
     }
 }

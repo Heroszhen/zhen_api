@@ -6,6 +6,7 @@ use App\Entity\S3File;
 use App\Service\S3Service;
 use App\Service\UtilService;
 use Aws\Result;
+use DateTime;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -71,6 +72,8 @@ final class AddS3FolderController extends AbstractController
             ->setId(1)
             ->setName($this->s3Service->getNameFromPath($content['path']))
             ->setFullName($content['path'])
+            ->setSize(0)
+            ->setUpdated((new DateTime())->format('Y-m-d h:s:i'));
         ;
         $data = $this->normalizer->normalize($s3file, null, ['groups' => ['read']]);  
 
