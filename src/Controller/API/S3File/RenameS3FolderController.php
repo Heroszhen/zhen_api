@@ -76,8 +76,8 @@ final class RenameS3FolderController extends AbstractController
         
         $s3file
             ->setId(1)
-            ->setName($this->s3Service->getNameFromPath($content['path']))
-            ->setFullName($content['path'])
+            ->setName($this->s3Service->getNameFromPath($content['newName']))
+            ->setFullName($content['newName'])
             ->setSize(0)
             ->setUpdated((new \DateTime())->format('Y-m-d h:s:i'));
         ;

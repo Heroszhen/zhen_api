@@ -235,9 +235,8 @@ class S3Service
             "Prefix" => $oldPath,
             'Delimiter' => ""
         ]);
-        /*
-        $oldPathTab = explode('/', $oldPath);
-        array_pop($oldPathTab);*/
+        
+        $this->addOneFile($bucket, $newPath);
         foreach ($objects as $object) {
             $elmPath = $object['Key'];
             if ($oldPath === $elmPath) {
@@ -250,7 +249,6 @@ class S3Service
             $newCompletedElmPath = $newPath . $newElmPath;
 
             $isFile = !$this->utilService->strEndsWith($elmPath, '/');
-            dump($newElmPath, $newCompletedElmPath, $isFile);
             if ($isFile) {
                 if ($this->hasElement($bucket, $newCompletedElmPath)) {
                     $tab = explode('/', $newCompletedElmPath);
