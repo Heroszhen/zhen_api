@@ -140,6 +140,9 @@ class S3Service
         if (null !== $fileUrl) {
             $info['SourceFile'] = $fileUrl;
             $info['ContentType'] = $contentType;
+            if ($contentType === 'text/plain') {
+                $info['ContentType'] = 'text/plain; charset=utf-8';
+            }
         }
 
         return $this->s3Client->putObject($info);
