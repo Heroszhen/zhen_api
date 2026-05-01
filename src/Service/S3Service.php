@@ -7,13 +7,15 @@ use Aws\Result;
 use Aws\S3\S3Client;
 use App\Service\UtilService;
 use Aws\S3\Exception\S3Exception;
+use Psr\Log\LoggerInterface;
 
 class S3Service
 {
     private S3Client $s3Client;
     private UtilService $utilService;
+    private LoggerInterface $logger;
 
-    public function __construct(UtilService $utilService)
+    public function __construct(UtilService $utilService, LoggerInterface $logger)
     {
         $this->s3Client = new S3Client([
             'region' => 'eu-west-3',
@@ -25,6 +27,7 @@ class S3Service
         ]);
 
         $this->utilService = $utilService;
+        $this->logger = $logger;
     }
 
     public function getClient(): S3Client
@@ -144,6 +147,23 @@ class S3Service
                 $info['ContentType'] = 'text/plain; charset=utf-8';
             }
         }
+
+        return $this->s3Client->putObject($info);
+    }
+
+    public function modifyOneFile(string $bucket, string $path, string $content, ?string $contentType = null): Result
+    {
+        $info = [
+            'Bucket' => $bucket,
+            'Key' => $path,
+        ];
+
+        $info['Body'] = $content; 
+        
+        if ($contentType === 'text/plain') {
+            $contentType = 'text/plain; charset=utf-8';
+        }
+        $info['ContentType'] = $contentType;
 
         return $this->s3Client->putObject($info);
     }
@@ -317,5 +337,19 @@ class S3Service
         }
 
         return $bucketDto;
+    }
+
+    public function getHead(string $bucket, string $path):?Result
+    {
+        try {
+            return $this->s3Client->headObject([
+                'Bucket' => $bucket,
+                'Key' => $path
+            ]);
+        } catch (S3Exception $e) {
+            $this->logger->error("S3Service getHead: {$bucket} {$path}", [$e->getAwsErrorMessage()]);
+
+            return null;
+        }
     }
 }

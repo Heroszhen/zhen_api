@@ -15,6 +15,7 @@ use App\Controller\API\S3File\RenameS3FileController;
 use App\Controller\API\S3File\RenameS3FolderController;
 use App\Controller\API\S3File\GetS3BucketController;
 use App\Controller\API\S3File\GetS3FoldersController;
+use App\Controller\API\S3File\ModifyS3FileController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator as AppAssert;
@@ -47,6 +48,16 @@ use App\Validator as AppAssert;
  *              "validation_groups"={"check_path", "check_newname"},
  *              "openapi_context"={
  *                   "summary"="rename one file",
+ *              },
+ *         },
+ *         "post_modify_file"={
+ *              "method"="POST",
+ *              "path"="/s3files/modify-file",
+ *              "controller"=ModifyS3FileController::class,
+ *              "denormalization_context"={"groups"={"input"}},
+ *              "validation_groups"={"check_path"},
+ *              "openapi_context"={
+ *                   "summary"="modify one file content",
  *              },
  *         },
  *         "post_delete_file"={
